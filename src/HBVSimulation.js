@@ -1,5 +1,7 @@
 import { exec } from "child_process"
 import path from "path"
+import SimulationResults from "./SimulationResults.js"
+import * as fs from "fs"
 
 export default class HBVSimulation {
   _type = "SingleRun"
@@ -44,6 +46,46 @@ export default class HBVSimulation {
           throw new Error("Runtime error of simulation. " + stderr)
         }
         console.log(stdout)
+      }
+    )
+    return this
+  }
+
+  readResults() {
+    const nameResults = "./Results.txt"
+    try {
+      const data = fs.readFileSync(
+        path.join(this._catchmentPath, `/${this._nameOutputDir}`, nameResults),
+        "utf8"
+      )
+      return new SimulationResults(data)
+    } catch (e) {
+      throw new Error("Error read Results.txt")
+    }
+  }
+  async putInputData(simulationInput) {
+    const pathInputTxt = "./Data/ptq.txt"
+    let addingLine = simulationInput.toString()
+
+    const inputData = fs.readFileSync(
+      path.join(this._catchmentPath, pathInputTxt),
+      {
+        encoding: "utf8"
+      }
+    )
+
+    addingLine =
+      inputData.split("\n").pop() === "" ? addingLine : "\n" + addingLine
+
+    fs.appendFile(
+      path.join(this._catchmentPath, pathInputTxt),
+      addingLine,
+      function(error) {
+        if (error) {
+          console.log(error.message)
+          throw new Error("error adding data to file 'ptq.txt'")
+        }
+        console.log(`Added value ${addingLine}into ptq.txt`)
       }
     )
     return this
