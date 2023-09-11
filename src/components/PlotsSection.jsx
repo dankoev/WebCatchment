@@ -1,4 +1,4 @@
-import LinesPlot from "./UI/LinesPlot"
+import LinesPlot from "./UI/LinesPlot/LinesPlot"
 
 const PlotsSection = () => {
   const labels = [
