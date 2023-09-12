@@ -2,12 +2,18 @@ import { exec } from "child_process"
 import path from "path"
 import SimulationResults from "./SimulationResults.js"
 import * as fs from "fs"
+import PeriodSimResults from "./PeriodSimResults.js"
 import { ServerError, ValueRequireError } from "./ServerExeptions.js"
 
 export default class HBVSimulation {
   _type = "SingleRun"
 
   constructor(catchmentPath, nameOutputDir) {
+    if (!catchmentPath || !nameOutputDir) {
+      throw new ValueRequireError(
+        "Wrong param(s) catchmentPath or(and) nameOutputDir"
+      )
+    }
     this._checkValidParametrs(catchmentPath, nameOutputDir)
     this._catchmentPath = path.resolve(catchmentPath)
     this._nameOutputDir = nameOutputDir
@@ -28,7 +34,7 @@ export default class HBVSimulation {
         `Invalid symbols in nameOutputDir ${name}. Use a-z,A-Z,0-9,_`
       )
     }
-    unsafedCommand.forEach((el) => {
+    unsafedCommand.forEach(el => {
       if (path.includes(el) || name.includes(el)) {
         throw new ValueRequireError("Unsafe words were used")
       }
@@ -65,6 +71,22 @@ export default class HBVSimulation {
     }
   }
 
+  readResultsInPeriod(startDate, endDate) {
+    const nameResults = "./Results.txt"
+    try {
+      const data = fs.readFileSync(
+        path.join(this._catchmentPath, `/${this._nameOutputDir}`, nameResults),
+        "utf8"
+      )
+      return new PeriodSimResults(data, startDate, endDate)
+    } catch (e) {
+      if (e instanceof ServerError) {
+        throw e
+      }
+      throw new Error("Error read Results.txt " + e.message)
+    }
+  }
+
   async putInputData(simulationInput) {
     const pathInputTxt = "./Data/ptq.txt"
     let addingLine = simulationInput.toString()
@@ -87,7 +109,7 @@ export default class HBVSimulation {
           console.log(error.message)
           throw new ServerError("error adding data to file 'ptq.txt'")
         }
-        console.log(`Added value ${addingLine}into ptq.txt`)
+        console.log(`Added value(s) ${addingLine}into ptq.txt`)
       }
     )
     return this
