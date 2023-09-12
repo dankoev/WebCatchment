@@ -5,6 +5,7 @@ import fs from "fs"
 import { it, describe } from "mocha"
 import path from "path"
 import assert from "node:assert/strict"
+import { ServerError } from "../src/ServerExeptions.js"
 
 describe("creating HBVSimulation obj", () => {
   it("create HBVSimulation obj by path", () => {
@@ -40,7 +41,7 @@ describe("creating HBVSimulation obj", () => {
         () => {
           new HBVSimulation(element, "test")
         },
-        Error,
+        ServerError,
         `Don't pass with parameter ${element}`
       )
     })
@@ -52,7 +53,7 @@ describe("creating HBVSimulation obj", () => {
         () => {
           new HBVSimulation("test", element)
         },
-        Error,
+        ServerError,
         `Don't pass with parameter ${element}`
       )
     })
@@ -70,7 +71,7 @@ describe("#HBVSimulation functions", () => {
     const pathToData = path.resolve("./HBV-light_data/HBV-land")
     assert.throws(() => {
       new HBVSimulation(pathToData, "wrongName").readResults()
-    }, /^Error: Error read Results.txt$/)
+    }, /^ServerError: Error read Results.txt$/)
   })
 
   it("adding data with current time to the file that is used in HBV Simulation", async () => {

@@ -1,3 +1,5 @@
+import { ValueRequireError } from "./ServerExeptions.js"
+
 export default class SimulationResults {
   constructor(txtResults) {
     this._header = {}
@@ -23,14 +25,14 @@ export default class SimulationResults {
 
   getColByIndex(nCol) {
     if (this._columns[nCol] === undefined) {
-      throw new Error("Not exist column with this index")
+      throw new ValueRequireError("Not exist column with this index")
     }
     return this._columns[nCol]
   }
 
   getColByName(name) {
     if (this._header[name] === undefined) {
-      throw new Error("Not exist column with this name")
+      throw new ValueRequireError("Not exist column with this name")
     }
     return this._columns[this._header[name]]
   }

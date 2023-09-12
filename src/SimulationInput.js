@@ -1,3 +1,5 @@
+import { ValueRequireError } from "./ServerExeptions.js"
+
 export default class SimulationInput {
   constructor(precipitation, temperature, qobs) {
     const _precipitation = Number(precipitation)
@@ -5,7 +7,7 @@ export default class SimulationInput {
     const _qobs = Number(qobs)
 
     if (isNaN(_precipitation) || isNaN(_temperature) || isNaN(_qobs)) {
-      throw new Error(
+      throw new ValueRequireError(
         "SimulationInput wrong values. Parameters can only be Number type"
       )
     }

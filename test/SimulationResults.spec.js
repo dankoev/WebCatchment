@@ -2,6 +2,7 @@ import HBVSimulation from "../src/HBVSimulation.js"
 import { it, describe } from "mocha"
 import path from "path"
 import assert from "node:assert/strict"
+import { ValueRequireError } from "../src/ServerExeptions.js"
 
 describe("#SimulationResults functions", () => {
   const pathToData = path.resolve("./HBV-light_data/HBV-land")
@@ -55,12 +56,13 @@ describe("#SimulationResults functions", () => {
   it("request of column with wrong index", async () => {
     assert.throws(() => {
       result.getColByIndex(-1)
-    }, /^Error: Not exist column with this index$/)
+      
+    }, /^ValueRequireError: Not exist column with this index$/)
   })
 
   it("request of column with wrong index", async () => {
     assert.throws(() => {
       result.getColByName("WrongName")
-    }, /^Error: Not exist column with this name$/)
+    }, /^ValueRequireError: Not exist column with this name$/)
   })
 })
