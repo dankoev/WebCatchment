@@ -1,0 +1,20 @@
+{
+  "name": "WebCatchment",
+  "version": "1.0.0",
+  "description": "server app for catchment analysis based on HBV-light CLI",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "Anigirka <daniil.00.kov@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.47.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,32 @@
+HBV-land	SubCatchment_1
+ Water Balance [mm/year]:
+ Sum Qsim	557.45562948647
+ Sum Qobs	368.857658643326
+ Sum Precipitation	810.507658643326
+ Sum AET	218.693438265215
+ Sum PET	455.722513692609
+ Contribution of Q0	0.102748000245118
+ Contribution of Q1	0.57141517100878
+ Contribution of Q2	0.325836828746102
+ Goodness of fit:
+ Coefficient of determination	0.0643727177488259
+ Model efficiency	-2.06724291285982
+ Kling-Gupta efficiency	-0.106828715859519
+ Kling-Gupta efficiency ('non-parametric')	0.369210854677812
+ Efficiency for log(Q)	-0.0504331177420387
+ Flow weighted efficiency	-0.551096353106068
+ Mean difference	-188.597970843144
+ Volume Error	0.488697153430906
+ MARE Measure	-0.186044258762173
+ Lindstrom Measure	-2.11837319751672
+ Spearman Rank	0.634492911887646
+ QObsSample	-9999
+ PythonScript	-9999
+ Snow cover RMSE	-9999
+ Glacier Absolute Mean Relative Error	-9999
+ Glacier Mean Absolute Error	-9999
+ Groundwater Spearman Rank	-9999
+ Reff Snow Water Equivalent	-9999
+ SWE Mean Absolute Error	-9999
+ Flowtime within boundaries	-9999
+ Flow within boundaries	-9999
