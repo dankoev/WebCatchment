@@ -1,5 +1,12 @@
-export default class SimdataService {
-  static async getData({ periodStart, periodEnd, columnsNames, location }) {
+import { SimDataRequest, SimDataResponce } from "./SimDataService.models"
+
+export default class SimDataService {
+  static async getData({
+    periodStart,
+    periodEnd,
+    columnsNames,
+    location
+  }: SimDataRequest): Promise<SimDataResponce | undefined> {
     const res = await fetch("/api/getCols", {
       method: "POST",
       headers: {
@@ -14,10 +21,10 @@ export default class SimdataService {
     })
 
     if (res.ok) {
-      let data = await res.json()
+      const data = await res.json()
       data.periodStart = parseDate(data.periodStart)
       data.periodEnd = parseDate(data.periodEnd)
-      return data 
+      return data
     }
     switch (res.status) {
       case 400: {
@@ -30,10 +37,10 @@ export default class SimdataService {
   }
 }
 
-function stringifyDate(date) {
+function stringifyDate(date: string) {
   return date.split("-").join("")
 }
-function parseDate(date) {
+function parseDate(date: string) {
   const year = date.slice(0, 4)
   const mounth = date.slice(4, 6)
   const day = date.slice(6, 8)

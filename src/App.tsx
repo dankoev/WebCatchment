@@ -1,5 +1,5 @@
+import UpdatedPlots from "./components/UpdatedPlots/UpdatedPlots"
 import "./styles/App.css"
-import UpdatedPlots from "./components/UpdatedPlots"
 
 function App() {
   return (

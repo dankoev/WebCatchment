@@ -1,7 +1,8 @@
-import PropsTypes from "prop-types"
+import { FC } from "react"
 import classes from "./DateInput.module.css"
+import { DateInputProps } from "./DateInput.props"
 
-const DateInput = ({ text, name, defaultVal }) => {
+const DateInput: FC<DateInputProps> = ({ text, name, defaultVal }) => {
   return (
     <p>
       <label>
@@ -15,12 +16,6 @@ const DateInput = ({ text, name, defaultVal }) => {
       </label>
     </p>
   )
-}
-
-DateInput.propTypes = {
-  text: PropsTypes.string,
-  name: PropsTypes.string,
-  defaultVal: PropsTypes.string
 }
 
 export default DateInput
