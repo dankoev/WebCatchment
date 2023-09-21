@@ -1,33 +1,40 @@
 import LinesPlot from "./UI/LinesPlot/LinesPlot"
 
-const PlotsSection = () => {
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July"
-  ]
-  const datasetsT = [
-    {
-      data: [10, 0, 8, 7, 36, 6, 7],
-      borderColor: "rgb(53, 10, 235)",
-      backgroundColor: "rgba(0, 0, 0, 0.5)"
-    }
-  ]
-  const datasetsC = [
-    {
-      data: [1, 3, 7, 7, 20, 5, 7],
-      borderColor: "rgb(53, 162, 235)",
-      backgroundColor: "rgba(53, 162, 235, 0.5)"
-    }
-  ]
+function getArrayDates(periodStart, periodEnd) {
+  let mutDate = new Date(periodStart)
+  let dateEnd = new Date(periodEnd) 
+  dateEnd.setDate(dateEnd.getDate() + 1)
+  const datesArray = []
+  while(+mutDate !== +dateEnd ){
+    datesArray.push(mutDate.toLocaleDateString("ru-ru").split('.').join('-'))
+    mutDate.setDate(mutDate.getDate() + 1 )
+  }
+  return datesArray
+}
+
+const PlotsSection = ({ periodStart, periodEnd, columns }) => {
+  getArrayDates(periodStart, periodEnd)
+  const labels = getArrayDates(periodStart,periodEnd)
+
+
   return (
     <section className="plots">
-      <LinesPlot data={{ labels, datasets: datasetsT }} />
-      <LinesPlot title="C" data={{ labels, datasets: datasetsC }} />
+      {columns.map(column => (
+        <LinesPlot
+          title={column.name}
+          key={column.name}
+          data={{
+            labels,
+            datasets: [
+              {
+                data: column.values,
+                borderColor: "rgb(53, 162, 235)",
+                backgroundColor: "rgba(53, 162, 235, 0.5)"
+              }
+            ]
+          }}
+        />
+      ))}
     </section>
   )
 }
