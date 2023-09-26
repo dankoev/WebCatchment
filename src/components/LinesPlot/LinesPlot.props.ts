@@ -1,7 +1,10 @@
+import { LineColors, PointColors } from "./LinesPlot.enums"
+
 interface PlotDataset {
+  label?: string
   data: Array<number>
-  borderColor: string
-  backgroundColor: string
+  borderColor: LineColors
+  backgroundColor: PointColors 
 }
 
 export interface PlotData {
@@ -10,6 +13,6 @@ export interface PlotData {
 }
 
 export interface LinesPlotProps {
-  title: string
+  title?: string
   data: PlotData
 }

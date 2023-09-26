@@ -1,6 +1,8 @@
 import { FC } from "react"
 import { PlotsSectionsProps } from "./PlotsSection.props"
 import LinesPlot from "../LinesPlot/LinesPlot"
+import { LineColors, PointColors } from "../LinesPlot/LinesPlot.enums"
+import { SimDataColumn } from "../../api/SimDataService.models"
 
 function getArrayDates(periodStart: string, periodEnd: string) {
   const mutDate = new Date(periodStart)
@@ -14,29 +16,40 @@ function getArrayDates(periodStart: string, periodEnd: string) {
   return datesArray
 }
 
-const PlotsSection: FC<PlotsSectionsProps> = ({
-  periodStart,
-  periodEnd,
-  columns
-}) => {
-  getArrayDates(periodStart, periodEnd)
-  const labels = getArrayDates(periodStart, periodEnd)
+function transformIntoHeap(
+  arr: Array<SimDataColumn>,
+  heapSize: number | undefined
+): Array<Array<SimDataColumn>> {
+  const arrCopy = [...arr]
+  const resultArr: Array<Array<SimDataColumn>> = []
 
+  while (arrCopy.length !== 0) {
+    resultArr.push(arrCopy.splice(0, heapSize ?? 1))
+  }
+  return resultArr
+}
+
+const PlotsSection: FC<PlotsSectionsProps> = ({ plotsData, mergeNumber }) => {
+  const { periodStart, periodEnd, columns } = plotsData
+
+  const heapsColumns = transformIntoHeap(columns, mergeNumber)
+  const labels = getArrayDates(periodStart, periodEnd)
+  console.log(heapsColumns)
   return (
     <section className="plots">
-      {columns.map(column => (
+      {heapsColumns.map((heap, index) => (
         <LinesPlot
-          title={column.name}
-          key={column.name}
+          key={index}
           data={{
             labels,
-            datasets: [
-              {
-                data: column.values,
-                borderColor: "rgb(53, 162, 235)",
-                backgroundColor: "rgba(53, 162, 235, 0.5)"
+            datasets: heap.map((lineData, i) => {
+              return {
+                label: lineData.name,
+                data: lineData.values,
+                borderColor: Object.values(LineColors)[i],
+                backgroundColor: Object.values(PointColors)[i]
               }
-            ]
+            })
           }}
         />
       ))}

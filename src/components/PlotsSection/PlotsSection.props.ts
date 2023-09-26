@@ -1,3 +1,6 @@
 import { SimDataResponce } from "../../api/SimDataService.models"
 
-export type PlotsSectionsProps = Omit<SimDataResponce, "warningList"> 
+export interface PlotsSectionsProps {
+  plotsData: Omit<SimDataResponce, "warningList">
+  mergeNumber?: 2 | 3 | undefined
+}

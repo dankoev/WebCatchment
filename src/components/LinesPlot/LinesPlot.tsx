@@ -31,12 +31,12 @@ const LinesPlot: FC<LinesPlotProps> = ({ title, data }) => {
           responsive: true,
           plugins: {
             legend: {
-              display: data.datasets.length > 1,
+              display: true,
               position: "right"
             },
             title: {
               display: true,
-              text: title ?? "Unknown"
+              text: title ?? ""
             }
           }
         }}
