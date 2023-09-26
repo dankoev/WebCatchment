@@ -1,5 +1,32 @@
-.dateInput {
-  margin: 5px;
+.div {
+  display: inline-block;
+}
+.input {
+  width: 150px;
+  margin-bottom: 5px;
+  margin-right: 5px;
   font-family: inherit;
+  font-size: 0.9rem;
+  padding: 9px 8px 3px;
+  font-size: 1;
   border-radius: 6px;
+  border: 1px solid #bdbdbd;
+}
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(61, 61, 61, 0.5);
+}
+.label {
+  display: block;
+  text-align: center;
+  max-width: 30%;
+  text-wrap: nowrap;
+  overflow: hidden;
+  position: relative;
+  top: 8px;
+  left: 10px;
+  background-color: white;
+  font-family: inherit;
+  font-size: 0.7em;
+  color: rgba(26, 26, 28, 0.7);
 }

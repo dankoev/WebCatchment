@@ -1,20 +1,20 @@
 import { FC } from "react"
-import classes from "./DateInput.module.css"
+import styles from "./DateInput.module.css"
 import { DateInputProps } from "./DateInput.props"
 
 const DateInput: FC<DateInputProps> = ({ text, name, defaultVal }) => {
   return (
-    <p>
-      <label>
+    <div className={styles.div}>
+      <label className={styles.label}>
         {text}
+      </label>
         <input
-          className={classes.dateInput}
+          className={styles.input}
           type="date"
           name={name}
           defaultValue={defaultVal}
         />
-      </label>
-    </p>
+    </div>
   )
 }
 

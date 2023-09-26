@@ -2,6 +2,7 @@ import DateInput from "../DateInput/DateInput"
 import Select from "../Select/Select"
 import { DataFormProps } from "./DataForm.props"
 import { FC } from "react"
+import styles from "./DataForm.module.css"
 
 const DataForm: FC<DataFormProps> = ({
   updateDataEvent,
@@ -17,17 +18,19 @@ const DataForm: FC<DataFormProps> = ({
     updateDataEvent({ periodStart, periodEnd, location: selectedLocation })
   }
   return (
-    <form onSubmit={handleSubmit}>
-      <DateInput
-        text="Начало периода:"
-        name="periodStart"
-        defaultVal={startDefaultDate}
-      />
-      <DateInput
-        text="Конец периода:"
-        name="periodEnd"
-        defaultVal={endDefaultDate}
-      />
+    <form  className={styles.form} onSubmit={handleSubmit}>
+      <div>
+        <DateInput
+          text="Начало:"
+          name="periodStart"
+          defaultVal={startDefaultDate}
+        />
+        <DateInput
+          text="Конец:"
+          name="periodEnd"
+          defaultVal={endDefaultDate}
+        />
+      </div>
       <div>
         <Select
           name="location"
@@ -37,8 +40,8 @@ const DataForm: FC<DataFormProps> = ({
           ]}
           defaultVal="Выберите локацию:"
         />
+        <button className={styles.button}  type="submit"> Показать </button>
       </div>
-      <button type="submit"> Показать </button>
     </form>
   )
 }

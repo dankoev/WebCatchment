@@ -1,0 +1,10 @@
+.location {  
+  font-family: inherit;
+  margin-bottom: 5px;
+  border-radius: 0.25rem;
+  padding: 2px 5px;
+  font-size: 0.9rem;
+  outline: none; 
+  cursor: pointer;
+  border: 1px solid #bdbdbd;
+}
