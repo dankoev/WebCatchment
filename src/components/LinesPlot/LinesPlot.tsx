@@ -9,7 +9,6 @@ import {
   Legend
 } from "chart.js"
 import { Line } from "react-chartjs-2"
-import classes from "./Plot.module.css"
 import { FC } from "react"
 import { LinesPlotProps } from "./LinesPlot.props"
 
@@ -23,16 +22,17 @@ ChartJS.register(
   Legend
 )
 
-const LinesPlot: FC<LinesPlotProps> = ({ title, data }) => {
+const LinesPlot: FC<LinesPlotProps> = ({ title, data, className }) => {
   return (
-    <div className={classes.linePlot}>
+    <div>
       <Line
+        className={className}
         options={{
           responsive: true,
           plugins: {
             legend: {
               display: true,
-              position: "right"
+              position: "top"
             },
             title: {
               display: true,

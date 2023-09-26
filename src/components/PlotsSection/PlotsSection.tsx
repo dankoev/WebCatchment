@@ -3,6 +3,7 @@ import { PlotsSectionsProps } from "./PlotsSection.props"
 import LinesPlot from "../LinesPlot/LinesPlot"
 import { LineColors, PointColors } from "../LinesPlot/LinesPlot.enums"
 import { SimDataColumn } from "../../api/SimDataService.models"
+import styles from "./PlotSection.module.css"
 
 function getArrayDates(periodStart: string, periodEnd: string) {
   const mutDate = new Date(periodStart)
@@ -39,6 +40,7 @@ const PlotsSection: FC<PlotsSectionsProps> = ({ plotsData, mergeNumber }) => {
     <section className="plots">
       {heapsColumns.map((heap, index) => (
         <LinesPlot
+          className = {styles.plot}
           key={index}
           data={{
             labels,

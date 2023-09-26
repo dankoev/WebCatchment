@@ -14,5 +14,6 @@ export interface PlotData {
 
 export interface LinesPlotProps {
   title?: string
+  className?: string
   data: PlotData
 }
