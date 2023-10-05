@@ -1,18 +1,23 @@
 import { ValueRequireError } from "./ServerExeptions.js"
 
 export default class SimulationInput {
-  constructor(precipitation, temperature, qobs) {
+  constructor(precipitation, temperature, qobs, date) {
     const _precipitation = Number(precipitation)
     const _temperature = Number(temperature)
     const _qobs = Number(qobs)
 
     if (isNaN(_precipitation) || isNaN(_temperature) || isNaN(_qobs)) {
       throw new ValueRequireError(
-        "SimulationInput wrong values. Parameters can only be Number type"
+        "SimulationInput wrong values. Parameters (precipitation, temperature, qobs) can only be Number type"
+      )
+    }
+    if (date !== undefined && !(date instanceof Date)) {
+      throw new ValueRequireError(
+        "SimulationInput wrong values. Parameter 'date' not valid"
       )
     }
     this._data = {
-      date: new Date(),
+      date: date ?? new Date(),
       precipitation: _precipitation,
       temperature: _temperature,
       qobs: _qobs
@@ -21,14 +26,28 @@ export default class SimulationInput {
 
   toString() {
     const { date, precipitation, temperature, qobs } = this._data
-    const year = date.getFullYear().toString()
-    const month = (date.getMonth() + 1).toString().padStart(2, "0")
-    const _date = date.getDate().toString().padStart(2, "0")
-    const formatedData = year + month + _date
-    return [formatedData, precipitation, temperature, qobs].join("\t") + "\n"
+    const [ISODate] = date.toISOString().match(/.{10}/)
+    return (
+      [
+        ISODate.replaceAll("-", ""),
+        precipitation.toFixed(2),
+        temperature.toFixed(2),
+        qobs
+      ].join("\t") + "\n"
+    )
   }
 
-  show() {
-    console.log(this.toString())
+  get date() {
+    return this._data.date
+  }
+
+  get temperature() {
+    return this._data.temperature
+  }
+  get qobs() {
+    return this._data.qobs
+  }
+  get precipitation() {
+    return this._data.precipitation
   }
 }
