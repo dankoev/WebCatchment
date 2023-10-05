@@ -1,0 +1,40 @@
+[
+  {
+    "key": "Barguzin",
+    "name": "Баргузин",
+    "urlArchive": "https://ru$postfix.rp5.ru/download/files.synop/30/30636.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+    "postfixArray": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      3
+    ],
+    "urlPrognosis": "https://rp5.ru/Погода_в_Баргузине",
+    "beginArchDate": "2009-02-26",
+    "lastArchDate": "2023-10-03",
+    "beginInputArchDate": "2008-01-01",
+    "lastInputArchDate": "2023-10-03",
+    "pathByPjRoot": "./HBV-light_data/Barguzin"
+  },
+  {
+    "key": "Tulun",
+    "name": "Тулун",
+    "urlArchive": "",
+    "postfixArray": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      3
+    ],
+    "urlPrognosis": "",
+    "beginArchDate": "2009-02-26",
+    "lastArchDate": "2023-10-08",
+    "beginInputArchDate": "2008-01-01",
+    "lastInputArchDate": "2023-10-08",
+    "pathByPjRoot": "./HBV-light_data/Tulun"
+  }
+]
