@@ -1,4 +1,8 @@
-import { SimDataRequest, SimDataResponce } from "./SimDataService.models"
+import {
+  LocationsInfo,
+  SimDataRequest,
+  SimDataResponce
+} from "./SimDataService.models"
 
 export default class SimDataService {
   static async getData({
@@ -13,8 +17,8 @@ export default class SimDataService {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        periodStart: stringifyDate(periodStart),
-        periodEnd: stringifyDate(periodEnd),
+        periodStart,
+        periodEnd,
         columnsNames,
         location
       })
@@ -22,27 +26,26 @@ export default class SimDataService {
 
     if (res.ok) {
       const data = await res.json()
-      data.periodStart = parseDate(data.periodStart)
-      data.periodEnd = parseDate(data.periodEnd)
       return data
     }
-    switch (res.status) {
-      case 400: {
-        const errorBody = await res.json()
-        throw new Error(`Error. ${errorBody.message}`)
-      }
-      case 500:
-        throw new Error("Server Error. Try again or later")
+    await errorHandler(res)
+  }
+  static async getLocationsInfo(): Promise<Array<LocationsInfo>> {
+    const res = await fetch("/api/locationsInfo", { method: "GET" })
+    if (res.ok) {
+      const data = await res.json()
+      return data
     }
+    errorHandler(res)
   }
 }
-
-function stringifyDate(date: string) {
-  return date.split("-").join("")
-}
-function parseDate(date: string) {
-  const year = date.slice(0, 4)
-  const mounth = date.slice(4, 6)
-  const day = date.slice(6, 8)
-  return `${year}-${mounth}-${day}`
+async function errorHandler(res: Response) {
+  switch (res.status) {
+    case 400: {
+      const errorBody = await res.json()
+      throw new Error(`Error. ${errorBody.message}`)
+    }
+    case 500:
+      throw new Error(`Server Error. ${await res.text()}`)
+  }
 }
