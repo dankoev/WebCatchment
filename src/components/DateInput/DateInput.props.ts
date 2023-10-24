@@ -1,5 +1,5 @@
 export interface DateInputProps {
   text: string 
   name: string
-  defaultVal: string | undefined
+  defaultVal: string | undefined | Date
 }

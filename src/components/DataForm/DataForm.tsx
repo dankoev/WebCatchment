@@ -7,42 +7,46 @@ import styles from "./DataForm.module.css"
 const DataForm: FC<DataFormProps> = ({
   updateDataEvent,
   startDefaultDate,
-  endDefaultDate
+  endDefaultDate,
+  selectOptions,
+  ...props
 }) => {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const periodStart = e.currentTarget.periodStart.value
     const periodEnd = e.currentTarget.periodEnd.value
     const selectedLocation = e.currentTarget.location.value
-
     updateDataEvent({ periodStart, periodEnd, location: selectedLocation })
   }
+
   return (
-    <form  className={styles.form} onSubmit={handleSubmit}>
-      <div>
-        <DateInput
-          text="Начало:"
-          name="periodStart"
-          defaultVal={startDefaultDate}
-        />
-        <DateInput
-          text="Конец:"
-          name="periodEnd"
-          defaultVal={endDefaultDate}
-        />
-      </div>
-      <div>
-        <Select
-          name="location"
-          options={[
-            { value: "Barguzin", name: "Баргузин" },
-            { value: "Tulun", name: "Тулун" }
-          ]}
-          defaultVal="Выберите локацию:"
-        />
-        <button className={styles.button}  type="submit"> Показать </button>
-      </div>
-    </form>
+    <div className={props.className}>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div>
+          <DateInput
+            text="Начало:"
+            name="periodStart"
+            defaultVal={startDefaultDate}
+          />
+          <DateInput
+            text="Конец:"
+            name="periodEnd"
+            defaultVal={endDefaultDate}
+          />
+        </div>
+        <div>
+          <Select
+            name="location"
+            options={selectOptions}
+            defaultVal="Выберите локацию:"
+          />
+          <button className={styles.button} type="submit">
+            {" "}
+            Показать{" "}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 
