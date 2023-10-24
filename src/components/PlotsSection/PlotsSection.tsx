@@ -6,12 +6,16 @@ import { SimDataColumn } from "../../api/SimDataService.models"
 import styles from "./PlotSection.module.css"
 
 function getArrayDates(periodStart: string, periodEnd: string) {
-  const mutDate = new Date(periodStart)
-  const dateEnd = new Date(periodEnd)
-  dateEnd.setDate(dateEnd.getDate() + 1)
+  let mutDate = new Date(periodStart)
+  let dateEnd = new Date(periodEnd)
+  dateEnd.setDate(dateEnd.getDate())
+
+  if (+mutDate > +dateEnd) {
+    [dateEnd, mutDate] = [mutDate, dateEnd]
+  }
   const datesArray = []
-  while (+mutDate !== +dateEnd) {
-    datesArray.push(mutDate.toLocaleDateString("ru-ru").split(".").join("-"))
+  while (+mutDate <= +dateEnd) {
+    datesArray.push(mutDate.toISOString().slice(0, 10))
     mutDate.setDate(mutDate.getDate() + 1)
   }
   return datesArray
@@ -35,12 +39,11 @@ const PlotsSection: FC<PlotsSectionsProps> = ({ plotsData, mergeNumber }) => {
 
   const heapsColumns = transformIntoHeap(columns, mergeNumber)
   const labels = getArrayDates(periodStart, periodEnd)
-  console.log(heapsColumns)
   return (
-    <section className="plots">
+    <section className={styles.section}>
       {heapsColumns.map((heap, index) => (
         <LinesPlot
-          className = {styles.plot}
+          className={styles.plot}
           key={index}
           data={{
             labels,
