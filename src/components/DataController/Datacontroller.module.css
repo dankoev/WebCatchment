@@ -1,0 +1,19 @@
+.section {
+  display: flex;
+  width: 100%;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex:1 ;
+  position: relative;
+}
+.message {
+  position: absolute; 
+  left: 180px; 
+  top: 25px;
+  /* z-index: -100; */
+}
+.attention {
+  border-color: #cf5f1f;
+}
+
