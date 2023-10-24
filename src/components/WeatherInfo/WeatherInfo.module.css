@@ -1,0 +1,15 @@
+.info {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #bfbaba;
+  border-radius: 5px;
+  font-size: 0.9em;
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5);
+}
+.list {
+  list-style: none;
+}
+.list__link {
+  outline: none;
+  text-decoration: none;
+}
