@@ -1,0 +1,30 @@
+{
+  "Barguzin": {
+    "urlArchive": "https://ru$postfix.rp5.ru/download/files.synop/30/30636.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+    "urlUniversal": "https://pogoda1.ru/barguzin",
+    "postfixArray": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      3
+    ],
+    "beginArchDate": "2009-02-26",
+    "lastArchDate": "2023-10-16"
+  },
+  "Tulun": {
+    "urlArchive": "https://ru$postfix.rp5.ru/download/files.synop/30/30504.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+    "urlUniversal": "https://pogoda1.ru/tulun",
+    "postfixArray": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      3
+    ],
+    "beginArchDate": "2009-01-01",
+    "lastArchDate": "2023-10-16"
+  }
+}

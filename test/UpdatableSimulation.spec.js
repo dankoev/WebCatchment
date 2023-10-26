@@ -41,17 +41,17 @@ describe("#UpdatableSimulation functions", () => {
     checkDateinPeriod(
       "2008-10-10",
       "2009-12-12",
-      WeatherData.updatableLocations["Barguzin"]
+      new WeatherData().locations["Barguzin"]
     )
     checkDateinPeriod(
       "2008-10-10",
       "2010-12-12",
-      WeatherData.updatableLocations["Barguzin"]
+      new WeatherData().locations["Barguzin"]
     )
     checkDateinPeriod(
       "2008-10-31",
       "2009-12-31",
-      WeatherData.updatableLocations["Barguzin"]
+      new WeatherData().locations["Barguzin"]
     )
   })
   it("read file Results.txt with wrong dates", () => {
@@ -59,21 +59,21 @@ describe("#UpdatableSimulation functions", () => {
       checkDateinPeriod(
         "2008-10-10",
         "1000-12-12",
-        WeatherData.updatableLocations["Barguzin"]
+        new WeatherData().locations["Barguzin"]
       )
     }, /Incorrect value of period end/)
     assert.throws(() => {
       checkDateinPeriod(
         "1000-10-10",
         "1000-12-12",
-        WeatherData.updatableLocations["Barguzin"]
+        new WeatherData().locations["Barguzin"]
       )
     }, /Incorrect value of period start/)
     assert.throws(() => {
       checkDateinPeriod(
         "1010-13-10",
         "1000-12-12",
-        WeatherData.updatableLocations["Barguzin"]
+        new WeatherData().locations["Barguzin"]
       )
     }, /Incorrect date in period start or end/)
   })

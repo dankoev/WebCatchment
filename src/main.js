@@ -3,8 +3,12 @@ import process from "node:process"
 import { ValueRequireError } from "./ServerExeptions.js"
 import WeatherData from "./WeatherAPI/WeatherData.js"
 import UpdatableSimulation from "./UpdatableSimulation.js"
+import DataUpdater from "./DataUpdater.js"
 
 const PORT = process.env.PORT || 8080
+
+// DataUpdater.enableIntervalUpdater()
+DataUpdater.updateResultsFrom("pogoda1")
 
 const app = express()
 app.use(json())
@@ -13,7 +17,7 @@ app.post("/api/getCols", (request, response) => {
   try {
     const { periodStart, periodEnd, columnsNames, location } = request.body
     const result = new UpdatableSimulation(
-      WeatherData.updatableLocations[location]
+      new WeatherData().locations[location]
     )
       .readResultsInPeriod(new Date(periodStart), new Date(periodEnd))
       .getColumns(columnsNames)
@@ -30,7 +34,7 @@ app.post("/api/getCols", (request, response) => {
   }
 })
 app.get("/api/locationsInfo", (req, res) => {
-  const data = WeatherData.locationsArray.map(el => {
+  const data = new WeatherData().locationsArray.map(el => {
     const { key, name, lastInputArchDate, beginInputArchDate } = el
     return {
       key,
@@ -39,6 +43,6 @@ app.get("/api/locationsInfo", (req, res) => {
       beginDate: beginInputArchDate
     }
   })
-  res.send(JSON.stringify(data))
+  res.send(JSON.stringify(data, null, 2))
 })
 app.listen(PORT)

@@ -6,7 +6,7 @@ import WeatherData from "../src/WeatherAPI/WeatherData.js"
 describe("#WeatherArchive functions", () => {
   it("test with wrong location", () => {
     assert.throws(() => {
-      new WeatherArchiveAPI(WeatherData.updatableLocations.wrong)
+      new WeatherArchiveAPI(new WeatherData().locations.wrong)
     }, /Wrong location/) 
   })
 })

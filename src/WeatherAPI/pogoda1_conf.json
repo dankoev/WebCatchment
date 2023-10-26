@@ -1,0 +1,40 @@
+{
+  "Barguzin": {
+    "urlsUniversal": [
+      {
+        "url": "https://pogoda1.ru/barguzin",
+        "multiplier": 1
+      }
+    ],
+    "beginArchDate": "2017-06-07",
+    "lastArchDate": "2023-10-25"
+  },
+  "Tulun": {
+    "urlsUniversal": [
+      {
+        "url": "https://pogoda1.ru/tulun",
+        "multiplier": 1
+      }
+    ],
+    "beginArchDate": "2017-06-07",
+    "lastArchDate": "2023-10-25"
+  },
+  "Uda_Udinsk": {
+    "urlsUniversal": [
+      {
+        "url": "https://pogoda1.ru/sosnovo-ozerskoye",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "https://pogoda1.ru/khilok",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "https://pogoda1.ru/khorinsk",
+        "multiplier": 0.3333
+      }
+    ],
+    "beginArchDate": "2017-06-07",
+    "lastArchDate": "2023-10-25"
+  }
+}

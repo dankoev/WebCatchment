@@ -3,15 +3,24 @@ import * as fs from "fs"
 import path from "path"
 import readline from "readline"
 import SimulationInput from "./SimulationInput.js"
-import WeatherArchiveAPI from "./WeatherAPI/WeatherArchiveApi.js"
-import { ServerError } from "./ServerExeptions.js"
+import { ServerError, ValueRequireError } from "./ServerExeptions.js"
 
 export default class UpdatableSimulation extends HBVSimulation {
   _pathToTempFile = path.join(this._catchmentPath, "./Data/temp.txt")
+  _simSettingsPath = path.join(this._catchmentPath, "./Data/Simulation.xml")
+  _availableSettings = {
+    startPeriod:
+      /(<StartOfSimulationPeriod>)(.+)(<\/StartOfSimulationPeriod>)/gm,
+    endPeriod: /(<EndOfSimulationPeriod>)(.+)(<\/EndOfSimulationPeriod>)/gm
+  }
 
-  constructor(location) {
+  constructor(location, updater) {
+    if (!location) {
+      throw new ValueRequireError("location not specified")
+    }
     super(path.resolve(location.pathByPjRoot), "Result")
     this.location = location
+    this.updater = updater
     this._pathToInputData = path.join(this._catchmentPath, "./Data/ptq.txt")
   }
 
@@ -22,11 +31,80 @@ export default class UpdatableSimulation extends HBVSimulation {
     )
     return new SimulationInput(+prec, +temp, +qobs, convertedDate)
   }
+
   _inputsToString(arr) {
     return arr
       .reverse()
       .map(el => el.toString())
       .join("")
+  }
+
+  _changeSetting(type, newVal) {
+    const settings = fs.readFileSync(this._simSettingsPath, {
+      encoding: "utf8"
+    })
+    if (!this._availableSettings[type]) {
+      throw new ValueRequireError(`Setting ${type} not exist`)
+    }
+    const updatedXml = settings.replace(
+      this._availableSettings[type],
+      `$1${newVal}$3`
+    )
+    fs.writeFileSync(this._simSettingsPath, updatedXml, {
+      encoding: "utf8"
+    })
+  }
+
+  async _createPtqFileWithUpdate(conditionCurry, callbackSuccess, errorUpdate) {
+    const input = fs.createReadStream(this._pathToInputData)
+    const readLine = readline.createInterface({ input })
+    const output = fs.createWriteStream(this._pathToTempFile)
+    const callbackSuccessCreateTempFile = () => {
+      fs.rm(this._pathToInputData, rmErr => {
+        if (rmErr) {
+          errorUpdate(rmErr)
+          return
+        }
+        fs.rename(this._pathToTempFile, this._pathToInputData, renErr => {
+          if (renErr) {
+            errorUpdate(renErr)
+            return
+          }
+          callbackSuccess("Update ptq.txt complete ")
+        })
+      })
+    }
+    const errConfigFun = () => {
+      output.removeListener("close", callbackSuccessCreateTempFile)
+      output.close()
+      errorUpdate(new ServerError("Config param (lastInputArchDate) error "))
+    }
+    const ptqUpdater = async line => {
+      if (!/^\d/.test(line)) {
+        output.write(line + "\n")
+        return
+      }
+      const simInput = this._transformToSimInput(line)
+      output.write(line + "\n")
+      const condition = conditionCurry(simInput)
+      if (condition) {
+        input.removeListener("close", errConfigFun)
+        readLine.removeListener("line", ptqUpdater)
+        try {
+          const periodData = await conditionCurry(simInput)?.()
+          const stringPeriod = this._inputsToString(periodData)
+          output.write(stringPeriod)
+        } catch (err) {
+          output.removeListener("close", callbackSuccessCreateTempFile)
+          errorUpdate(err)
+        }
+        output.close()
+      }
+    }
+
+    output.on("close", callbackSuccessCreateTempFile)
+    input.on("close", errConfigFun)
+    readLine.on("line", ptqUpdater)
   }
 
   async updateToLastArchiveData() {
@@ -37,6 +115,12 @@ export default class UpdatableSimulation extends HBVSimulation {
         res(successMess)
       }
     }
+    if (this.updater === undefined) {
+      throw new ServerError("Updater not specified")
+    }
+    if (!this.location.updatable) {
+      throw new ServerError("Specified location is not updatable")
+    }
     const lastInputArchDate = new Date(this.location.lastInputArchDate)
     const lastArchDate = new Date(this.location.lastArchDate)
     if (+lastArchDate === +lastInputArchDate) {
@@ -45,51 +129,71 @@ export default class UpdatableSimulation extends HBVSimulation {
         endComplete("Archive date in ptq.txt is up to date")
       })
     }
-    const input = fs.createReadStream(this._pathToInputData)
-    const readLine = readline.createInterface({ input })
-    const output = fs.createWriteStream(this._pathToTempFile)
-
-    const callbackSuccessCreateTempFile = () => {
-      fs.rm(this._pathToInputData, rmErr => {
-        if (rmErr) endComplete(null, rmErr)
-        fs.rename(this._pathToTempFile, this._pathToInputData, renErr => {
-          this.location.lastInputArchDate = this.location.lastArchDate
-          endComplete("Update ptq.txt to last Archive data complete", renErr)
-        })
-      })
+    const conditionCurry = simInput => {
+      if (+simInput.date === +lastInputArchDate) {
+        return async () =>
+          await this.updater.getInputParamsInPeriod(
+            lastInputArchDate,
+            lastArchDate
+          )
+      }
     }
-    const errConfigFun = () => {
-      output.removeListener("close", callbackSuccessCreateTempFile)
-      output.close()
-      endComplete(
-        null,
-        new ServerError("Config param (lastInputArchDate) error ")
+    const callbackSuccess = message => {
+      this.location.lastInputArchDate = this.location.lastArchDate
+      this._changeSetting(
+        "endPeriod",
+        new Date(this.location.lastInputArchDate).toISOString()
+      )
+      endComplete(message + "by archive data")
+    }
+    const errCreate = err => {
+      endComplete(null, err)
+    }
+    this._createPtqFileWithUpdate(conditionCurry, callbackSuccess, errCreate)
+    return new Promise(resolveFunc)
+  }
+
+  async updatePrognosisData() {
+    const lastInputArchDate = new Date(this.location.lastInputArchDate)
+    const lastArchDate = new Date(this.location.lastArchDate)
+    if (+lastArchDate !== +lastInputArchDate) {
+      throw new ServerError(
+        "Update progosis data error. First update the archived data to relevant"
       )
     }
-    output.on("close", callbackSuccessCreateTempFile)
-    input.on("close", errConfigFun)
-
-    readLine.on("line", async line => {
-      if (!/^\d/.test(line)) {
-        output.write(line + "\n")
-        return
+    if (this.updater === undefined) {
+      throw new ServerError("Updater not specified")
+    }
+    let endComplete
+    const resolveFunc = (res, rej) => {
+      endComplete = (successMess, err) => {
+        if (err) rej(err)
+        res(successMess)
       }
+    }
+    const endWeek = new Date()
+    endWeek.setDate(endWeek.getDate() + 7)
+    endWeek.setUTCHours(0, 0, 0, 0)
 
-      const simInput = this._transformToSimInput(line)
-      if (+simInput.date > +lastInputArchDate) return
-      output.write(line + "\n")
-
+    const conditionCurry = simInput => {
       if (+simInput.date === +lastInputArchDate) {
-        input.removeListener("close", errConfigFun)
-        const periodData = await new WeatherArchiveAPI(
-          this.location
-        ).getInputParamsInPeriod(lastInputArchDate, lastArchDate)
-
-        const stringPeriod = this._inputsToString(periodData)
-        output.write(stringPeriod)
-        output.close()
+        return async () =>
+          await this.updater.getInputParamsInPeriod(lastInputArchDate, endWeek)
       }
-    })
+    }
+    const callbackSuccess = message => {
+      this._changeSetting("endPeriod", endWeek.toISOString())
+      this.location["lastDate"] = endWeek.toISOString().slice(0, 10)
+      endComplete(message + "by prognosis data")
+    }
+    const errCreateTempFile = err => {
+      endComplete(null, err)
+    }
+    this._createPtqFileWithUpdate(
+      conditionCurry,
+      callbackSuccess,
+      errCreateTempFile
+    )
     return new Promise(resolveFunc)
   }
 }
