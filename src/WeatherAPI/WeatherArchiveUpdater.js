@@ -5,24 +5,22 @@ import zlib from "zlib"
 import { ServerError, ValueRequireError } from "../ServerExeptions.js"
 
 export default class WeatherArchiveUpdater {
-  nameCsvData = "archive_data.csv"
-
   constructor(updatableLocation) {
     if (!updatableLocation) {
       throw new ValueRequireError("Wrong location")
     }
     this.location = updatableLocation
-    this.pathToData = path.join(updatableLocation.pathByPjRoot, this.nameCsvData)
+    this.pathToData = updatableLocation.pathByPjRoot
   }
 
-  async _fetchArchiveData(dateStart, dateEnd) {
+  async _fetchArchiveData(dateStart, dateEnd, url, name) {
     const [formatDateStart, formatDateEnd] = [
       dateStart.toLocaleDateString("ru"),
       dateEnd.toLocaleDateString("ru")
     ]
 
     for (const postfix of this.location.postfixArray) {
-      const formatedUrl = this.location.urlArchive
+      const formatedUrl = url
         .replace("$start", formatDateStart)
         .replace("$end", formatDateEnd)
         .replace("$postfix", postfix)
@@ -31,12 +29,11 @@ export default class WeatherArchiveUpdater {
           responseType: "arraybuffer"
         })
         .then(response => {
-          console.log("Fetch archive data success with postfix " + postfix)
+          console.log(`Fetch archive "${name}" data success with postfix "${postfix}"`)
           return response
         })
         .catch(err => {
           if (err.response.status === 403) {
-            console.log("Fetch rejected. Try other postfix")
             return
           }
           throw new ServerError("Error fetcth Archive Data. " + err.message)
@@ -44,17 +41,19 @@ export default class WeatherArchiveUpdater {
 
       if (resp) return resp
     }
-    throw new ServerError("Error fetcth Archive Data.")
+    throw new ServerError(`Error fetcth Archive Data for ${name}`)
   }
 
-  _writeWeatherData(response) {
-    const output = fs.createWriteStream(this.pathToData)
+  _writeWeatherData(response, name) {
+    const output = fs.createWriteStream(
+      path.join(this.pathToData, `${name}.csv`),
+      { encoding: "utf8" }
+    )
     const unzip = zlib.createGunzip()
 
     const controlIntegrity = new RegExp('"\\r\\n', "g")
-    const changerNameFirstColumn = /Местное [\sа-яА-Я]+/
+    const changerNameFirstColumn = /Местное [\sа-я-А-Я]+/
     unzip.on("data", chunck => {
-
       if (changerNameFirstColumn.test(chunck.toString())) {
         chunck = chunck.toString().replace(changerNameFirstColumn, "local_date")
       }
@@ -62,7 +61,6 @@ export default class WeatherArchiveUpdater {
         chunck = chunck.toString().replace(controlIntegrity, '";\r\n')
       }
       output.write(chunck.toString())
-
     })
 
     unzip.write(response.data)
@@ -81,11 +79,19 @@ export default class WeatherArchiveUpdater {
     const endYesterday = new Date()
     endYesterday.setUTCHours(0, 0, 0, 0, 0)
     endYesterday.setDate(endYesterday.getDate() - 1)
-    return await this._fetchArchiveData(begin, endYesterday)
-      .then(resp => this._writeWeatherData(resp))
-      .then(() => {
-        console.log("Success write archive Data")
-        this.location.lastArchDate = endYesterday
-      })
+    const fetchAndWrite = async (beginDate, endDate, url, name) => {
+      return await this._fetchArchiveData(beginDate, endDate, url, name).then(
+        resp => this._writeWeatherData(resp, name)
+      )
+    }
+    await Promise.all(
+      this.location.urlsArchive.map(
+        async ({ url, name }) =>
+          await fetchAndWrite(begin, endYesterday, url, name)
+      )
+    ).then(() => {
+      console.log(`Success write all archive Data for ${this.location.name}`)
+      this.location.lastArchDate = endYesterday
+    })
   }
 }

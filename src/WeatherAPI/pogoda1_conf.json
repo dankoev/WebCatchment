@@ -7,17 +7,25 @@
       }
     ],
     "beginArchDate": "2017-06-07",
-    "lastArchDate": "2023-10-25"
+    "lastArchDate": "2023-10-27"
   },
   "Tulun": {
     "urlsUniversal": [
       {
         "url": "https://pogoda1.ru/tulun",
-        "multiplier": 1
+        "multiplier": 0.3333
+      },
+      {
+        "url": "https://pogoda1.ru/verkhnyaya-gutara",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "https://pogoda1.ru/orlik-2",
+        "multiplier": 0.3333
       }
     ],
     "beginArchDate": "2017-06-07",
-    "lastArchDate": "2023-10-25"
+    "lastArchDate": "2023-10-27"
   },
   "Uda_Udinsk": {
     "urlsUniversal": [
@@ -35,6 +43,6 @@
       }
     ],
     "beginArchDate": "2017-06-07",
-    "lastArchDate": "2023-10-25"
+    "lastArchDate": "2023-10-27"
   }
 }
