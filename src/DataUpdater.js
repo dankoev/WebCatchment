@@ -6,14 +6,20 @@ import WeatherData from "./WeatherAPI/WeatherData.js"
 import WeatherUniversalAPI from "./WeatherAPI/WeatherUniversalAPI.js"
 
 export default class DataUpdater {
-  static types = {
+  static updater = {
     pogoda1: {
       name: "pogoda1",
-      funcUpdater: DataUpdater._updateLocationFromPogoda1
+      getLocations: function() {
+        return new WeatherData(this.name).updatableLocations
+      },
+      archiveUpdate: this._updateArchiveFromPogoda1
     },
     rp5: {
       name: "rp5",
-      funcUpdater: DataUpdater._updateLocationFromRp5
+      getLocations: function() {
+        return new WeatherData(this.name).updatableLocations
+      },
+      archiveUpdate: this._updateArchiveFromRp5
     }
   }
   static enableIntervalUpdater() {
@@ -55,10 +61,49 @@ export default class DataUpdater {
       )
     })
   }
-  static async _updateLocationFromRp5(location) {
+  static async updateArchive(siteType) {
+    const updaterType = this.updater[siteType]
+    if (!updaterType) {
+      throw new ValueRequireError(`site type ${siteType} not exist`)
+    }
+    const locations = updaterType.getLocations()
+    await Promise.all(
+      Object.values(locations).map(
+        async location =>
+          await updaterType
+            .archiveUpdate(location)
+            .catch(err => Logging.writeError(err))
+      )
+    )
+    return this
+  }
+  static async updatePrognosis() {
+    const updaterType = this.updater["pogoda1"]
+    const locations = updaterType.getLocations()
+    await Promise.all(
+      Object.values(locations).map(
+        async location =>
+          await this._updatePrognosisData(location).catch(err =>
+            Logging.writeError(err)
+          )
+      )
+    )
+    return this
+  }
+  static async runSim() {
+    const updaterType = this.updater["pogoda1"]
+    const locations = updaterType.getLocations()
+    await Promise.all(
+      Object.values(locations).map(
+        async location =>
+          await this._runSim(location).catch(err => Logging.writeError(err))
+      )
+    )
+  }
+  static async _updateArchiveFromRp5(location) {
     const archiveApi = new WeatherArchiveAPI(location)
     const archiveSim = new UpdatableSimulation(location, archiveApi)
-    archiveApi
+    await archiveApi
       .updateArchiveData()
       .catch(err => {
         throw new ServerError(
@@ -72,13 +117,11 @@ export default class DataUpdater {
           `Error update ptq.txt file for location '${location.name}' <- ${err.message}`
         )
       })
-      .then(() => DataUpdater._updatePrognosisData(location))
-      .then(() => DataUpdater._runSim(location))
-      .catch(err => Logging.writeError(err))
-      .catch(err => Logging.writeError(err.message))
   }
-  static async _updateLocationFromPogoda1(location) {
-    new UpdatableSimulation(location, new WeatherUniversalAPI(location))
+  static async _updateArchiveFromPogoda1(location) {
+    const archiveApi = new WeatherUniversalAPI(location)
+    const archiveSim = new UpdatableSimulation(location, archiveApi)
+    await archiveSim
       .updateToLastArchiveData()
       .then(message => console.log(`${message} for ${location.name}`))
       .catch(err => {
@@ -86,20 +129,5 @@ export default class DataUpdater {
           `Update archive data error for location  '${location.name}' <- ${err.message}`
         )
       })
-      .then(() => DataUpdater._updatePrognosisData(location))
-      .then(() => DataUpdater._runSim(location))
-      .catch(err => Logging.writeError(err))
-  }
-  static updateResultsFrom(siteType) {
-    const updaterType = DataUpdater.types[siteType]
-    if (!updaterType) {
-      throw new ValueRequireError(`site type ${siteType} not exist`)
-    }
-    const locations = new WeatherData(updaterType.name).updatableLocations
-    Object.keys(locations).map(locKey =>
-      updaterType.funcUpdater(locations[locKey])
-    )
   }
 }
-// DataUpdater.updateResultsFrom("pogoda1")
-// DataUpdater.updateResultsFrom("rp5")

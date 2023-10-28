@@ -42,7 +42,6 @@ export default class HBVSimulation {
   }
 
   async run() {
-    console.log("Run simulation")
     exec(
       `HBV-light-CLI Run ${this._catchmentPath} ${this._type} ${this._nameOutputDir}`,
       (error, stdout, stderr) => {
