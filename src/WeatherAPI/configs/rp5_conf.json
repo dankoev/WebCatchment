@@ -3,6 +3,7 @@
     "urlsArchive": [
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30636.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Баргузине",
         "name": "Баргузин",
         "multiplier": 1
       }
@@ -16,22 +17,25 @@
       3
     ],
     "beginArchDate": "2009-02-26",
-    "lastArchDate": "2023-10-27"
+    "lastArchDate": "2023-10-29"
   },
   "Tulun": {
     "urlsArchive": [
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30504.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Тулуне",
         "name": "Тулун",
         "multiplier": 0.3333
       },
       {
-        "url": "https://ru$postfix.rp5.ru/download/files.synop/30/29789.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "url": "https://ru$postfix.rp5.ru/download/files.synop/29/29789.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Верхней_Гутаре",
         "name": "Верхняя_Гутара",
         "multiplier": 0.3333
       },
       {
-        "url": "https://ru$postfix.rp5.ru/download/files.synop/30/29998.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "url": "https://ru$postfix.rp5.ru/download/files.synop/29/29998.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Орлике",
         "name": "Орлик",
         "multiplier": 0.3333
       }
@@ -45,22 +49,25 @@
       3
     ],
     "beginArchDate": "2009-01-01",
-    "lastArchDate": "2023-10-26"
+    "lastArchDate": "2023-10-29"
   },
   "Uda_Udinsk": {
     "urlsArchive": [
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30844.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Баргузине",
         "name": "Хилок",
         "multiplier": 0.33333
       },
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30739.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Баргузине",
         "name": "Хоринск",
         "multiplier": 0.33333
       },
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30745.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
+        "userUrl": "https://rp5.ru/Архив_погоды_в_Баргузине",
         "name": "Сосново_Озерское",
         "multiplier": 0.3333
       }

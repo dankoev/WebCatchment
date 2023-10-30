@@ -77,18 +77,26 @@ function writeToJson(data) {
 export default class WeatherData {
   _pathRoot = "./src/WeatherAPI/"
   _weaterData = {
-    path: this._pathRoot + "WeatherData.json",
+    path: this._pathRoot + "/configs/WeatherData.json",
     write: writeToJson,
     parse: defaultParseJson
   }
   _config = {
     rp5: {
-      path: this._pathRoot + "rp5_conf.json",
+      path: this._pathRoot + "/configs/rp5_conf.json",
+      updateToYesterday: false,
       write: writeToJson,
       parse: defaultParseJson
     },
     pogoda1: {
-      path: this._pathRoot + "pogoda1_conf.json",
+      path: this._pathRoot + "/configs/pogoda1_conf.json",
+      updateToYesterday: true,
+      write: writeToJson,
+      parse: defaultParseJson
+    },
+    pogodaiklimat: {
+      path: this._pathRoot + "/configs/pogodaiklimat_conf.json",
+      updateToYesterday: true,
       write: writeToJson,
       parse: defaultParseJson
     }
@@ -110,18 +118,21 @@ export default class WeatherData {
       updatableLastInputArch,
       this._weaterData.parse()
     )
+    const selectedConf = this._config[this._configType]
     const updatableLast = createUpdatableJSON(this._weaterData, "lastDate")
     const linked = linkWithProto(updatableLast, _linked)
-    const updatableConfData = createUpdatableJSON(
-      this._config[this._configType],
-      "lastArchDate"
-    )
-    const configLinked = linkWithProto(
-      this._config[this._configType].parse(),
-      linked
-    )
+
+    const updatableConfData = createUpdatableJSON(selectedConf, "lastArchDate")
+    const configLinked = linkWithProto(selectedConf.parse(), linked)
     const result = linkWithProto(updatableConfData, configLinked)
-    if (this._configType === "pogoda1") {
+    // console.log(
+    //   result,
+    //   result.Barguzin.__proto__,
+    //   result.Barguzin.__proto__.__proto__,
+    //   result.Barguzin.__proto__.__proto__.__proto__,
+    //   result.Barguzin.__proto__.__proto__.__proto__.__proto__
+    // )
+    if (selectedConf.updateToYesterday) {
       const yesterday = new Date()
       yesterday.setUTCHours(0, 0, 0, 0)
       yesterday.setDate(yesterday.getDate() - 1)

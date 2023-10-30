@@ -2,22 +2,22 @@
   "Barguzin": {
     "name": "Баргузин",
     "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2023-10-27",
+    "lastInputArchDate": "2023-10-29",
     "pathByPjRoot": "./HBV-light_data/Barguzin",
-    "lastDate": "2023-11-04"
+    "lastDate": "2023-11-06"
   },
   "Tulun": {
     "name": "Тулун",
     "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2022-01-31",
+    "lastInputArchDate": "2023-10-29",
     "pathByPjRoot": "./HBV-light_data/Tulun",
-    "lastDate": "2023-11-01"
+    "lastDate": "2023-11-06"
   },
   "Uda_Udinsk": {
     "name": "Уда-Удинск",
     "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2023-10-26",
+    "lastInputArchDate": "2023-10-29",
     "pathByPjRoot": "./HBV-light_data/Uda_Udinsk",
-    "lastDate": "2023-11-03"
+    "lastDate": "2023-11-06"
   }
 }

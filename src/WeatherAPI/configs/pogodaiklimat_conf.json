@@ -1,0 +1,55 @@
+{
+  "Barguzin": {
+    "urlsUniversal": [
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=30636",
+        "name": "Баргузин",
+        "multiplier": 1
+      }
+    ],
+    "beginArchDate": "2011-01-01",
+    "lastArchDate": "2023-10-29"
+  },
+  "Tulun": {
+    "urlsUniversal": [
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=30504",
+        "name": "Тулун",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=29789",
+        "name": "Верхняя_Гутара",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=29998",
+        "name": "Орлик",
+        "multiplier": 0.3333
+      }
+    ],
+    "beginArchDate": "2011-01-01",
+    "lastArchDate": "2023-10-29"
+  },
+  "Uda_Udinsk": {
+    "urlsUniversal": [
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=30844",
+        "name": "Хилок",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=30739",
+        "name": "Хоринск",
+        "multiplier": 0.3333
+      },
+      {
+        "url": "http://www.pogodaiklimat.ru/weather.php?id=30745",
+        "name": "Сосново_Озерское",
+        "multiplier": 0.3333
+      }
+    ],
+    "beginArchDate": "2011-01-01",
+    "lastArchDate": "2023-10-29"
+  }
+}

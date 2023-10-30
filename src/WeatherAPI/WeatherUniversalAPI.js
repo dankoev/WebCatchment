@@ -1,76 +1,15 @@
-import axios from "axios"
 import { ServerError, ValueRequireError } from "../ServerExeptions.js"
-import * as htmlParser from "node-html-parser"
 import SimulationInput from "../SimulationInput.js"
 
 export default class WeatherUniversalAPI {
   maxPeriodLen = 30
-  constructor(updatableLocation) {
+  constructor(updatableLocation, parser) {
     this.location = updatableLocation
-  }
-
-  _dateValiadator(date) {
-    const testDateReq = /\d{2}-\d{2}-\d{4}/
-    if (!(date instanceof Date)) {
-      throw new ValueRequireError("Param 'date' must be instanceof 'Date'")
+    if (!parser?.getParamsByDate) {
+      throw new ValueRequireError(`parser ${parser} not valid`)
     }
-    try {
-      const [ISODate] = date
-        .toLocaleDateString("ru")
-        .replaceAll(".", "-")
-        .match(testDateReq)
-      return ISODate
-    } catch (err) {
-      throw new ValueRequireError("Invalid Date format " + err.message)
-    }
+    this._parser = parser
   }
-
-  async _fetchData(date, url) {
-    const formatDate = this._dateValiadator(date)
-    const urlWithDate = `${url}/${formatDate}/`
-    return await axios
-      .get(urlWithDate)
-      .then(response => response.data)
-      .catch(err => {
-        if (err.response?.status === 404) {
-          throw new ValueRequireError(
-            `Data with date ${date.toISOString()} not exist`
-          )
-        }
-        throw new ServerError("Fetch prognosis data error " + err)
-      })
-  }
-
-  async _getParamsByDate(date, url) {
-    const html = await this._fetchData(date, url)
-      .then(data => data)
-      .catch(err => {
-        throw new ServerError(err)
-      })
-    const document = htmlParser.parse(html)
-    const weatherDivs = document
-      .querySelector(".row-forecast-day-times")
-      .querySelectorAll(".row-forecast-time-of-day")
-    const lenData = weatherDivs.length
-
-    const [sumTemp, sumPrecip] = weatherDivs.reduce(
-      (acc, el) => {
-        const [temp] = el
-          .querySelector(".cell-forecast-temp")
-          ?.textContent.match(/.\d+/) ?? [0, "default"]
-        const [prec] = el
-          .querySelector(".cell-forecast-prec")
-          ?.textContent.match(/\d+[.,\s]\d*/) ?? [0, "default"]
-
-        acc[0] += +temp
-        acc[1] += +prec
-        return acc
-      },
-      [0, 0]
-    )
-    return { temp: sumTemp / lenData, precip: sumPrecip }
-  }
-
   _createArrayDates(periodStart, periodEnd) {
     let mutDate = new Date(periodEnd)
     let dateStart = new Date(periodStart)
@@ -96,7 +35,7 @@ export default class WeatherUniversalAPI {
     const getParamsByUrls = (date, arrayUrls) => {
       return Promise.all(
         arrayUrls.map(async ({ url, multiplier }) => {
-          const { precip, temp } = await this._getParamsByDate(date, url)
+          const { precip, temp } = await this._parser.getParamsByDate(date, url)
           return [multiplier * precip, multiplier * temp]
         })
       )

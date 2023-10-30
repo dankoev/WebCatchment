@@ -7,8 +7,7 @@ import DataUpdater from "./DataUpdater.js"
 
 const PORT = process.env.PORT || 8080
 
-// DataUpdater.enableIntervalUpdater()
-DataUpdater.updateResultsFrom("pogoda1")
+DataUpdater.enableIntervalUpdater()
 
 const app = express()
 app.use(json())
@@ -35,11 +34,11 @@ app.post("/api/getCols", (request, response) => {
 })
 app.get("/api/locationsInfo", (req, res) => {
   const data = new WeatherData().locationsArray.map(el => {
-    const { key, name, lastInputArchDate, beginInputArchDate } = el
+    const { key, name, lastDate, beginInputArchDate } = el
     return {
       key,
       name,
-      lastDate: lastInputArchDate,
+      lastDate: lastDate,
       beginDate: beginInputArchDate
     }
   })
