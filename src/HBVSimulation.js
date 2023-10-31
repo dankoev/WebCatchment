@@ -5,6 +5,10 @@ import * as fs from "fs"
 import PeriodSimResults from "./PeriodSimResults.js"
 import { ServerError, ValueRequireError } from "./ServerExeptions.js"
 
+/*
+ * Class interacting with HBVSimulation ClI and files
+ * with input data and output data of the simulation
+ * */
 export default class HBVSimulation {
   _type = "SingleRun"
 

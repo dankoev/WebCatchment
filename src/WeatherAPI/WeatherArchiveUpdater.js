@@ -3,7 +3,10 @@ import fs from "fs"
 import path from "path"
 import zlib from "zlib"
 import { ServerError, ValueRequireError } from "../ServerExeptions.js"
-
+/*
+ * A class that implements requesting/unpacking
+ * an archive with weather data (implemented for the "rp5" site)
+ * */
 export default class WeatherArchiveUpdater {
   constructor(updatableLocation) {
     if (!updatableLocation) {
@@ -29,7 +32,9 @@ export default class WeatherArchiveUpdater {
           responseType: "arraybuffer"
         })
         .then(response => {
-          console.log(`Fetch archive "${name}" data success with postfix "${postfix}"`)
+          console.log(
+            `Fetch archive "${name}" data success with postfix "${postfix}"`
+          )
           return response
         })
         .catch(err => {

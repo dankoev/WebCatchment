@@ -1,6 +1,10 @@
 import { ValueRequireWarning, ValueRequireError } from "./ServerExeptions.js"
 import SimulationResults from "./SimulationResults.js"
 
+/*
+ * Extension of class "SimulationResults"
+ * to obtain simulation results in the time period
+ * */
 class PeriodSimResults extends SimulationResults {
   constructor(txtResults, startDate, endDate) {
     super(txtResults)

@@ -1,5 +1,8 @@
 import { ValueRequireError } from "./ServerExeptions.js"
 
+/*
+ * Abstraction for Simulation Inputs
+ */
 export default class SimulationInput {
   constructor(precipitation, temperature, qobs, date) {
     const _precipitation = Number(precipitation)

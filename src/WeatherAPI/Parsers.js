@@ -1,7 +1,10 @@
 import axios from "axios"
 import { ServerError, ValueRequireError } from "../ServerExeptions.js"
 import * as htmlParser from "node-html-parser"
-
+/*
+ * Module with an object that implements
+ * queries and data parsing for specific sites 
+ * */
 function dateValidator(date) {
   const testDateReq = /\d{4}-\d{2}-\d{2}/
   if (!(date instanceof Date) && !testDateReq.test(date)) {

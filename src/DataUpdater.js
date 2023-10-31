@@ -6,6 +6,9 @@ import WeatherArchiveAPI from "./WeatherAPI/WeatherArchiveApi.js"
 import WeatherData from "./WeatherAPI/WeatherData.js"
 import WeatherUniversalAPI from "./WeatherAPI/WeatherUniversalAPI.js"
 
+/* Class that implements the composition for
+ * update weather data from sites
+ * */
 export default class DataUpdater {
   static updater = {
     pogoda1: {

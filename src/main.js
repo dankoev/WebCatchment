@@ -11,7 +11,9 @@ DataUpdater.enableIntervalUpdater()
 
 const app = express()
 app.use(json())
-
+/*
+ * Implementation of getting simulation results
+ * */
 app.post("/api/getCols", (request, response) => {
   try {
     const { periodStart, periodEnd, columnsNames, location } = request.body
@@ -32,6 +34,9 @@ app.post("/api/getCols", (request, response) => {
     }
   }
 })
+/*
+ * Implementation of getting avalible data
+ * */
 app.get("/api/locationsInfo", (req, res) => {
   const data = new WeatherData().locationsArray.map(el => {
     const { key, name, lastDate, beginInputArchDate } = el

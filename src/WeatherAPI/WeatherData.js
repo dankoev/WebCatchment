@@ -1,6 +1,9 @@
 import * as fs from "fs"
 import { ValueRequireError } from "../ServerExeptions.js"
-
+/*
+ * Module for interaction with    
+ * location settings located in the folder src/WeatherAPI/configs
+ */
 function createGetSet(obj, propName, valudator, setFunc) {
   const hidenProp = "_" + propName
   const updatableObj = {
@@ -77,25 +80,25 @@ function writeToJson(data) {
 export default class WeatherData {
   _pathRoot = "./src/WeatherAPI/"
   _weaterData = {
-    path: this._pathRoot + "/configs/WeatherData.json",
+    path: this._pathRoot + "configs/WeatherData.json",
     write: writeToJson,
     parse: defaultParseJson
   }
   _config = {
     rp5: {
-      path: this._pathRoot + "/configs/rp5_conf.json",
+      path: this._pathRoot + "configs/rp5_conf.json",
       updateToYesterday: false,
       write: writeToJson,
       parse: defaultParseJson
     },
     pogoda1: {
-      path: this._pathRoot + "/configs/pogoda1_conf.json",
+      path: this._pathRoot + "configs/pogoda1_conf.json",
       updateToYesterday: true,
       write: writeToJson,
       parse: defaultParseJson
     },
     pogodaiklimat: {
-      path: this._pathRoot + "/configs/pogodaiklimat_conf.json",
+      path: this._pathRoot + "configs/pogodaiklimat_conf.json",
       updateToYesterday: true,
       write: writeToJson,
       parse: defaultParseJson

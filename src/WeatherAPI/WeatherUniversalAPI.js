@@ -1,6 +1,11 @@
 import { ServerError, ValueRequireError } from "../ServerExeptions.js"
 import SimulationInput from "../SimulationInput.js"
-
+/*
+ * A class that implements requesting/transformation
+ * of weather data (implemented for the "pogoda1" and "pogodaiklimat" site).
+ * From the "pogoda1" website provides prognosis data, as well as archived data
+ * From the "pogodaiklimat" website provides only archived data
+ * */
 export default class WeatherUniversalAPI {
   maxPeriodLen = 30
   constructor(updatableLocation, parser) {

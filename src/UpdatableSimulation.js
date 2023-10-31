@@ -5,6 +5,11 @@ import readline from "readline"
 import SimulationInput from "./SimulationInput.js"
 import { ServerError, ValueRequireError } from "./ServerExeptions.js"
 
+/*
+ * Extension of the "HBVSimulation" class that implements
+ * receiving/writing archived/prognosis data into files with
+ * simulation input data
+ * */
 export default class UpdatableSimulation extends HBVSimulation {
   _pathToTempFile = path.join(this._catchmentPath, "./Data/temp.txt")
   _simSettingsPath = path.join(this._catchmentPath, "./Data/Simulation.xml")

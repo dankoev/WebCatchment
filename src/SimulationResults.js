@@ -1,5 +1,8 @@
 import { ValueRequireError } from "./ServerExeptions.js"
 
+/*
+ * Abstraction for simulation output
+ * */
 export default class SimulationResults {
   constructor(txtResults) {
     this._header = {}

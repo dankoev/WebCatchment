@@ -4,7 +4,10 @@ import fs from "fs"
 import path from "path"
 import { ServerError } from "../ServerExeptions.js"
 import SimulationInput from "../SimulationInput.js"
-
+/*
+ * A class that implements receiving
+ * archived data from a .csv file (implemented for the "rp5" site)
+ * */
 export default class WeatherArchiveAPI extends WeatherArchiveUpdater {
   constructor(updatableLocation) {
     super(updatableLocation)

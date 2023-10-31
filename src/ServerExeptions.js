@@ -1,3 +1,6 @@
+/*
+ * Custom Error classres
+ * */
 class ServerWarning extends Error {
   constructor(message) {
     super(message)
