@@ -11,7 +11,7 @@ function getArrayDates(periodStart: string, periodEnd: string) {
   dateEnd.setDate(dateEnd.getDate())
 
   if (+mutDate > +dateEnd) {
-    [dateEnd, mutDate] = [mutDate, dateEnd]
+    ;[dateEnd, mutDate] = [mutDate, dateEnd]
   }
   const datesArray = []
   while (+mutDate <= +dateEnd) {
@@ -22,22 +22,33 @@ function getArrayDates(periodStart: string, periodEnd: string) {
 }
 
 function transformIntoHeap(
-  arr: Array<SimDataColumn>,
+  arr: SimDataColumn[],
+  aliases: string[],
   heapSize: number | undefined
-): Array<Array<SimDataColumn>> {
-  const arrCopy = [...arr]
-  const resultArr: Array<Array<SimDataColumn>> = []
-
-  while (arrCopy.length !== 0) {
-    resultArr.push(arrCopy.splice(0, heapSize ?? 1))
-  }
-  return resultArr
+): Array<Array<[SimDataColumn, string | undefined]>> {
+  const arrAlias: [number, SimDataColumn, string | undefined][] = arr.map(
+    (el, i) => [i, el, aliases[i]]
+  )
+  const result = arrAlias.reduce<ReturnType<typeof transformIntoHeap>>(
+    (acc, [i, ...data]) => {
+      const pos = Math.floor(i / (heapSize ?? 1))
+      acc[pos] ??= []
+      acc[pos].push(data)
+      return acc
+    },
+    []
+  )
+  return result
 }
 
-const PlotsSection: FC<PlotsSectionsProps> = ({ plotsData, mergeNumber }) => {
+const PlotsSection: FC<PlotsSectionsProps> = ({
+  plotsData,
+  aliases,
+  mergeNumber
+}) => {
   const { periodStart, periodEnd, columns } = plotsData
 
-  const heapsColumns = transformIntoHeap(columns, mergeNumber)
+  const heapsColumns = transformIntoHeap(columns, aliases, mergeNumber)
   const labels = getArrayDates(periodStart, periodEnd)
   return (
     <section className={styles.section}>
@@ -47,14 +58,12 @@ const PlotsSection: FC<PlotsSectionsProps> = ({ plotsData, mergeNumber }) => {
           key={index}
           data={{
             labels,
-            datasets: heap.map((lineData, i) => {
-              return {
-                label: lineData.name,
-                data: lineData.values,
-                borderColor: Object.values(LineColors)[i],
-                backgroundColor: Object.values(PointColors)[i]
-              }
-            })
+            datasets: heap.map(([plotData, plotAlias], i) => ({
+              label: plotAlias ?? plotData.name,
+              data: plotData.values,
+              borderColor: Object.values(LineColors)[i],
+              backgroundColor: Object.values(PointColors)[i]
+            }))
           }}
         />
       ))}
