@@ -5,7 +5,8 @@ import WeatherInfoProps from "./WeaterInfo.props"
 const WeatherInfo: FC<WeatherInfoProps> = ({ actualDates, ...props }) => {
   const sites = [
     { name: "Расписание погоды", url: "https://rp5.ru/" },
-    { name: "Погода 1", url: "https://pogoda1.ru/" }
+    { name: "Погода 1", url: "https://pogoda1.ru/" },
+    { name: "Погода и климат", url: "http://www.pogodaiklimat.ru/" }
   ]
   return (
     <div className={`${styles.info} ${props.className}`}>
