@@ -1,4 +1,5 @@
-export type ISODateLike = `${number}${number}-${number}${number}-${number}${number}`
+export type ISODateLike =
+  `${number}${number}-${number}${number}-${number}${number}`
 export interface SimDataRequest {
   periodStart: ISODateLike | string
   periodEnd: ISODateLike | string
@@ -20,4 +21,6 @@ export interface LocationsInfo {
   lastDate: ISODateLike | string
   key: string
   name: string
+  square: number
+  meteoLocations: [string, number][]
 }

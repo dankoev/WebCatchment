@@ -30,13 +30,13 @@ export default class SimDataService {
     }
     await errorHandler(res)
   }
-  static async getLocationsInfo(): Promise<Array<LocationsInfo>> {
+  static async getLocationsInfo(): Promise<Array<LocationsInfo> | undefined> {
     const res = await fetch("/api/locationsInfo", { method: "GET" })
     if (res.ok) {
       const data = await res.json()
       return data
     }
-    errorHandler(res)
+    await errorHandler(res)
   }
 }
 async function errorHandler(res: Response) {
@@ -47,5 +47,8 @@ async function errorHandler(res: Response) {
     }
     case 500:
       throw new Error(`Server Error. ${await res.text()}`)
+    default: {
+      throw new Error ("Server don't work")
+    }
   }
 }

@@ -1,19 +1,25 @@
 import { useState } from "react"
 
-type UseFetchResponce<TArgs> = [(...args: TArgs[]) => void, string, boolean]
+type UseFetchResponce<TArgs> = [
+  (...args: TArgs[]) => void,
+  Error | null,
+  boolean
+]
 
 const useFetch = function <TArgs>(
   callback: (...args: TArgs[]) => Promise<void>
 ): UseFetchResponce<TArgs> {
   const [isLoading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState(null)
   const fetching = async (...args: TArgs[]) => {
-    setLoading(true)
-    callback(...args)
-      .catch((err: Error) => setError(err.message))
-      .finally(() => {
-        setLoading(false)
-      })
+    try {
+      setLoading(true)
+      await callback(...args)
+    } catch (err: any) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
   }
   return [fetching, error, isLoading]
 }
