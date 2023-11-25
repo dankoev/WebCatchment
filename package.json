@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha",
-    "server": "node src/main.js",
-    "dev": "nodemon src/main.js"
+    "server": "node src/main.js"
   },
   "keywords": [],
   "author": "Anigirka <daniil.00.kov@gmail.com>",

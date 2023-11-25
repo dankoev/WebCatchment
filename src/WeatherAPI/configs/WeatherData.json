@@ -1,23 +1,60 @@
 {
   "Barguzin": {
-    "name": "Баргузин",
-    "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2023-10-29",
+    "name": "p.Баргузин-п.Баргузин",
+    "square": 19800,
+    "meteoLocations": [
+      [
+        "Баргузин",
+        30636
+      ]
+    ],
+    "beginInputArchDate": "2000-01-01",
+    "lastInputArchDate": "2023-11-24",
     "pathByPjRoot": "./HBV-light_data/Barguzin",
-    "lastDate": "2023-11-06"
+    "lastDate": "2023-12-02"
   },
-  "Tulun": {
-    "name": "Тулун",
-    "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2023-10-29",
-    "pathByPjRoot": "./HBV-light_data/Tulun",
-    "lastDate": "2023-11-06"
+  "Iya": {
+    "name": "р.Ия-г.Тулун",
+    "square": 14500,
+    "meteoLocations": [
+      [
+        "Тулун",
+        30504
+      ],
+      [
+        "Верхняя Гутара",
+        29789
+      ],
+      [
+        "Орлик",
+        29998
+      ]
+    ],
+    "beginInputArchDate": "2000-01-01",
+    "lastInputArchDate": "2023-11-24",
+    "pathByPjRoot": "./HBV-light_data/Iya",
+    "lastDate": "2023-12-02"
   },
-  "Uda_Udinsk": {
-    "name": "Уда-Удинск",
-    "beginInputArchDate": "2021-01-01",
-    "lastInputArchDate": "2023-10-29",
-    "pathByPjRoot": "./HBV-light_data/Uda_Udinsk",
-    "lastDate": "2023-11-06"
+  "Uda": {
+    "name": "р.Уда-с.Удинск(Тарбагатай)",
+    "square": 20800,
+    "meteoLocations": [
+      [
+        "Хирок",
+        30844
+      ],
+      [
+        "Хоринск",
+        30739
+      ],
+      [
+        "Сосново-Озерское",
+        30745
+      ]
+    ],
+    "beginInputArchDate": "2008-01-01",
+    "lastInputArchDate": "2023-11-24",
+    "pathByPjRoot": "./HBV-light_data/Uda",
+    "lastDate": "2023-12-02"
   }
 }

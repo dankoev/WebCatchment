@@ -39,12 +39,15 @@ app.post("/api/getCols", (request, response) => {
  * */
 app.get("/api/locationsInfo", (req, res) => {
   const data = new WeatherData().locationsArray.map(el => {
-    const { key, name, lastDate, beginInputArchDate } = el
+    const { key, name, lastDate, beginInputArchDate, square, meteoLocations } =
+      el
     return {
       key,
       name,
       lastDate: lastDate,
-      beginDate: beginInputArchDate
+      beginDate: beginInputArchDate,
+      meteoLocations,
+      square
     }
   })
   res.send(JSON.stringify(data, null, 2))
