@@ -1,9 +1,9 @@
 import { FC } from "react"
 import { PlotsSectionsProps } from "./PlotsSection.props"
-import LinesPlot from "../LinesPlot/LinesPlot"
-import { LineColors, PointColors } from "../LinesPlot/LinesPlot.enums"
 import { SimDataColumn } from "../../api/SimDataService.models"
 import styles from "./PlotSection.module.css"
+import MixChart from "../MixChart/MixChart"
+import { LineColors, PointColors } from "../MixChart/MixChart.enums"
 
 function getArrayDates(periodStart: string, periodEnd: string) {
   let mutDate = new Date(periodStart)
@@ -22,15 +22,13 @@ function getArrayDates(periodStart: string, periodEnd: string) {
 }
 
 function transformIntoHeap(
-  arr: SimDataColumn[],
-  aliases: string[],
+  plotData: SimDataColumn[],
+  columnsOption: [string, string][],
   heapSize: number | undefined
-): Array<Array<[SimDataColumn, string | undefined]>> {
-  const arrAlias: [number, SimDataColumn, string | undefined][] = arr.map(
-    (el, i) => [i, el, aliases[i]]
-  )
-  const result = arrAlias.reduce<ReturnType<typeof transformIntoHeap>>(
-    (acc, [i, ...data]) => {
+): [SimDataColumn, string | undefined, string][][] {
+  const colsWithOptions = plotData.map((el, i) => [el, ...columnsOption[i]])
+  const result = colsWithOptions.reduce<ReturnType<typeof transformIntoHeap>>(
+    (acc, data, i) => {
       const pos = Math.floor(i / (heapSize ?? 1))
       acc[pos] ??= []
       acc[pos].push(data)
@@ -43,23 +41,24 @@ function transformIntoHeap(
 
 const PlotsSection: FC<PlotsSectionsProps> = ({
   plotsData,
-  aliases,
+  colsOption,
   mergeNumber
 }) => {
   const { periodStart, periodEnd, columns } = plotsData
 
-  const heapsColumns = transformIntoHeap(columns, aliases, mergeNumber)
+  const heapsColumns = transformIntoHeap(columns, colsOption, mergeNumber)
   const labels = getArrayDates(periodStart, periodEnd)
   return (
     <section className={styles.section}>
       {heapsColumns.map((heap, index) => (
-        <LinesPlot
+        <MixChart
           className={styles.plot}
           key={index}
           data={{
             labels,
-            datasets: heap.map(([plotData, plotAlias], i) => ({
+            datasets: heap.map(([plotData, plotAlias, type], i) => ({
               label: plotAlias ?? plotData.name,
+              type: type,
               data: plotData.values,
               borderColor: Object.values(LineColors)[i],
               backgroundColor: Object.values(PointColors)[i]
