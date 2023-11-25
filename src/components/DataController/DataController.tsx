@@ -2,57 +2,56 @@ import { FC, useEffect, useState } from "react"
 import SimDataService from "../../api/SimDataService"
 import useFetch from "../../hooks/useFetch"
 import { LocationsInfo } from "../../api/SimDataService.models"
-import WeatherInfo from "../WeatherInfo/WeatherInfo"
-import styles from "./Datacontroller.module.css"
 import Loader from "../Loader/Loader"
 import { useMessage } from "../../hooks/useMessage"
-import NotifiedDataForm from "../NotifiedDataForm/NotifiedDataForm"
-import MessageProvider from "../../context/MessageProvider/MessageProvider"
-import { Message } from "../Message/Message"
+import styles from "./DataCOntroller.module.css"
+import useSimResults from "../../hooks/useSimResults"
+import SelectsSection from "../SelectsSection/SelectsSection"
 
 const DataController: FC = () => {
   const [availableData, setAvailableData] = useState<LocationsInfo[]>()
   const { show } = useMessage()
+  const { state } = useSimResults()
 
   const getAvailableInfo = async () => {
-    return SimDataService.getLocationsInfo().then(data => {
-      console.log("fetch availableData")
-      setAvailableData(data)
-    })
+    console.log("get available info")
+    const data = await SimDataService.getLocationsInfo()
+    setAvailableData(data)
   }
   const [fetchAvailableData, fetchError, isLoadingInfo] =
     useFetch(getAvailableInfo)
+
   useEffect(() => {
     fetchAvailableData()
   }, [])
 
   useEffect(() => {
     if (fetchError) {
-      show(fetchError)
-      return
+      show(fetchError.message)
     }
   }, [fetchError])
 
+  const locationInfo = availableData?.find(el => el.key === state.location)
   return (
-    <MessageProvider>
-      <>
-        <Message type="error" />
-        <section className={styles.section}>
-          <NotifiedDataForm availableData={availableData} />
-          <Loader
-            className={styles.loader}
-            isLoading={isLoadingInfo}
-            size="20px"
-          />
-          <WeatherInfo
-            actualDates={[
-              availableData?.[0].beginDate,
-              availableData?.[0].lastDate
-            ]}
-          />
-        </section>
-      </>
-    </MessageProvider>
+    <section className={styles.section}>
+      <div>
+        <Loader isLoading={isLoadingInfo} size="20px" />
+        {availableData && <SelectsSection locationsInfo={availableData} />}
+      </div>
+      <div>
+        <h4>Информация о выбранной локации:</h4>
+        <span>Площадь: {locationInfo?.square} км²</span>
+        <p>Метеостанции:</p>
+        <ul className={styles.list}>
+          {locationInfo?.meteoLocations.map(([name, index]) => (
+            <li key={index}>
+              {name} ({index})
+            </li>
+          ))}
+        </ul>
+        <p>{}</p>
+      </div>
+    </section>
   )
 }
 
