@@ -4,3 +4,4 @@ package-lock.json
 
 /HBV-light_data
 *.bak
+logs/

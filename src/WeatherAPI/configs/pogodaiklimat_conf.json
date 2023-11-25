@@ -8,9 +8,9 @@
       }
     ],
     "beginArchDate": "2011-01-01",
-    "lastArchDate": "2023-10-29"
+    "lastArchDate": "2023-11-24"
   },
-  "Tulun": {
+  "Iya": {
     "urlsUniversal": [
       {
         "url": "http://www.pogodaiklimat.ru/weather.php?id=30504",
@@ -29,9 +29,9 @@
       }
     ],
     "beginArchDate": "2011-01-01",
-    "lastArchDate": "2023-10-29"
+    "lastArchDate": "2023-11-24"
   },
-  "Uda_Udinsk": {
+  "Uda": {
     "urlsUniversal": [
       {
         "url": "http://www.pogodaiklimat.ru/weather.php?id=30844",
@@ -50,6 +50,6 @@
       }
     ],
     "beginArchDate": "2011-01-01",
-    "lastArchDate": "2023-10-29"
+    "lastArchDate": "2023-11-24"
   }
 }

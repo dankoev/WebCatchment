@@ -8,18 +8,11 @@
         "multiplier": 1
       }
     ],
-    "postfixArray": [
-      1,
-      2,
-      4,
-      5,
-      6,
-      3
-    ],
+    "postfixArray": [1, 2, 4, 5, 6, 3],
     "beginArchDate": "2009-02-26",
     "lastArchDate": "2023-10-29"
   },
-  "Tulun": {
+  "Iya": {
     "urlsArchive": [
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30504.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
@@ -40,18 +33,11 @@
         "multiplier": 0.3333
       }
     ],
-    "postfixArray": [
-      1,
-      2,
-      4,
-      5,
-      6,
-      3
-    ],
+    "postfixArray": [1, 2, 4, 5, 6, 3],
     "beginArchDate": "2009-01-01",
     "lastArchDate": "2023-10-29"
   },
-  "Uda_Udinsk": {
+  "Uda": {
     "urlsArchive": [
       {
         "url": "https://ru$postfix.rp5.ru/download/files.synop/30/30844.$start.$end.1.0.0.ru.utf8.00000000.csv.gz",
@@ -72,14 +58,7 @@
         "multiplier": 0.3333
       }
     ],
-    "postfixArray": [
-      1,
-      2,
-      4,
-      5,
-      6,
-      3
-    ],
+    "postfixArray": [1, 2, 4, 5, 6, 3],
     "beginArchDate": "2009-01-01",
     "lastArchDate": "2023-10-26"
   }
