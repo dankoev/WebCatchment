@@ -1,10 +1,7 @@
 import { useContext } from "react"
-import {
-  ISimResultsContext,
-  SimResultsContext
-} from "../context/SimResultsProvider/SimResultsProvider.context"
+import { Context, IContext } from "../context/SimResultsProvider/SimResultsProvider.context"
 
 const useSimResults = () => {
-  return useContext(SimResultsContext) as ISimResultsContext
+  return useContext(Context) as IContext
 }
 export default useSimResults

@@ -1,74 +1,103 @@
-import { FC, useEffect, useReducer, useState } from "react"
+import { FC, useEffect, useReducer } from "react"
 import SimResultsProviderProps from "./SimResultsProvider.props"
-import {
-  SimResultsAction,
-  SimResultsContext,
-  SimResultsState
-} from "./SimResultsProvider.context"
+import { State, Context, Action, IContext } from "./SimResultsProvider.context"
 import useFetch from "../../hooks/useFetch"
-import {
-  SimDataRequest,
-  SimDataResponce
-} from "../../api/SimDataService.models"
+import { SimDataRequest } from "../../api/SimDataService.models"
 import SimDataService from "../../api/SimDataService"
-import { DatesWithLocation } from "../../components/DataForm/DataForm.props"
 
-function SimDataRequestReducer(
-  state: SimResultsState,
-  action: SimResultsAction
-): SimResultsState {
-  switch (action.type) {
-    case "setColumnsNames":
-      return { ...state, columnsNames: action.columnsNames }
-    case "setFormData":
+function SimDataRequestReducer(state: State, action: Action): State {
+  const { type } = action
+  const requestChecker = (state: State): State => {
+    if (
+      state.location &&
+      state.periodEnd &&
+      state.periodStart &&
+      state.columnsNames
+    ) {
+      return { ...state, hasRequestFull: true }
+    }
+    return { ...state, hasRequestFull: false }
+  }
+  switch (type) {
+    case "SET_COL_NAMES":
+      return requestChecker({
+        ...state,
+        status: "WAIT",
+        columnsNames: action.columnsNames
+      })
+    case "SET_LOCATION":
+      return requestChecker({
+        ...state,
+        status: "WAIT",
+        location: action.location
+      })
+    case "SET_PERIOD":
+      return requestChecker({
+        ...state,
+        status: "WAIT",
+        periodStart: action.periodStart,
+        periodEnd: action.periodEnd
+      })
+    case "SET_RESULT":
       return {
         ...state,
-        periodStart: action.periodStart,
-        periodEnd: action.periodEnd,
-        location: action.location
+        status: "OK",
+        simResults: action.simResults
       }
+    case "SET_ERROR": {
+      return {
+        ...state,
+        status: "ERROR",
+        error: action.error
+      }
+    }
     default:
       return state
   }
 }
 
 const SimResultsProvider: FC<SimResultsProviderProps> = ({ children }) => {
-  const [simDataRequest, dispatch] = useReducer(SimDataRequestReducer, {})
-
-  const [simResults, setSimResults] = useState<SimDataResponce>()
-
-  const updateSimResults = () => {
-    console.log("fetch plots data", simDataRequest)
-    return SimDataService.getData(simDataRequest).then(res => {
-      setSimResults(res)
-    })
+  const [state, dispatch] = useReducer(SimDataRequestReducer, {
+    status: "WAIT",
+    hasRequestFull: false,
+    error: null
+  })
+  const updateSimResults = async () => {
+    const res = await SimDataService.getData(state as SimDataRequest)
+    dispatch({ type: "SET_RESULT", simResults: res })
   }
   const [fetchSumResults, error, isLoading] =
     useFetch<SimDataRequest>(updateSimResults)
 
   useEffect(() => {
-    if (simDataRequest.columnsNames && simDataRequest.location)
-      fetchSumResults()
-  }, [simDataRequest])
+    if (state.hasRequestFull && state.status === "WAIT") fetchSumResults()
+  }, [state.hasRequestFull, state.status])
 
-  const setFormData = (data: DatesWithLocation) =>
-    dispatch({ type: "setFormData", ...data })
+  useEffect(() => {
+    if (error) dispatch({ type: "SET_ERROR", error: error })
+  }, [error])
 
-  const setColumnsNames = (data: string[]) =>
-    dispatch({ type: "setColumnsNames", columnsNames: data })
+  const setPeriod: IContext["setPeriod"] = (periodStart, periodEnd) =>
+    dispatch({ type: "SET_PERIOD", periodStart, periodEnd })
+
+  const setLocation: IContext["setLocation"] = location =>
+    dispatch({ type: "SET_LOCATION", location })
+
+  const setColumnsNames: IContext["setColumnsNames"] = columnsNames =>
+    dispatch({ type: "SET_COL_NAMES", columnsNames })
 
   return (
-    <SimResultsContext.Provider
+    <Context.Provider
       value={{
-        simResults,
+        state,
         isLoading,
-        error,
         setColumnsNames,
-        setFormData
+        setPeriod,
+        setLocation
       }}
     >
       {children}
-    </SimResultsContext.Provider>
+    </Context.Provider>
   )
 }
 

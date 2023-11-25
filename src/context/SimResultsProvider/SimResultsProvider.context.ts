@@ -3,22 +3,41 @@ import {
   SimDataRequest,
   SimDataResponce
 } from "../../api/SimDataService.models"
-import { DatesWithLocation } from "../../components/DataForm/DataForm.props"
 
-type ActionType = "setColumnsNames" | "fetchSimResults" | "setFormData"
+export interface State extends Partial<SimDataRequest> {
+  status: "OK" | "WAIT" | "ERROR"
+  error: Error | null
+  hasRequestFull: boolean
+  simResults?: SimDataResponce
+}
+export type Action =
+  | {
+      type: "SET_COL_NAMES"
+      columnsNames: string[]
+    }
+  | {
+      type: "SET_LOCATION"
+      location: string
+    }
+  | {
+      type: "SET_PERIOD"
+      periodStart: string
+      periodEnd: string
+    }
+  | {
+      type: "SET_RESULT"
+      simResults: SimDataResponce | undefined
+    }
+  | {
+      type: "SET_ERROR"
+      error: Error 
+    }
 
-export interface ISimResultsContext {
-  simResults: SimDataResponce | undefined
+export interface IContext {
+  state: State
   isLoading: boolean
-  error: string
-  setFormData: (data: DatesWithLocation) => void
-  setColumnsNames: (data: string[]) => void
+  setLocation: (location: string) => void
+  setColumnsNames: (columnsNames: string[]) => void
+  setPeriod: (periodStart: string, periodEnd: string) => void
 }
-export type SimResultsState = Partial<SimDataRequest>
-
-export interface SimResultsAction extends SimResultsState {
-  type: ActionType
-}
-export const SimResultsContext = React.createContext<ISimResultsContext | null>(
-  null
-)
+export const Context = React.createContext<IContext | null>(null)
