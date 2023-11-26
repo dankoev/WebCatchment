@@ -84,6 +84,14 @@ export default class UpdatableSimulation extends HBVSimulation {
       output.close()
       errorUpdate(new ServerError("Config param (lastInputArchDate) error "))
     }
+    const readError = err => {
+      output.removeListener("close", callbackSuccessCreateTempFile)
+      input.removeListener("close", errConfigFun)
+      output.close()
+      input.close()
+      readLine.close()
+      errorUpdate(err)
+    }
     const ptqUpdater = async line => {
       if (!/^\d/.test(line)) {
         output.write(line + "\n")
@@ -110,6 +118,10 @@ export default class UpdatableSimulation extends HBVSimulation {
     output.on("close", callbackSuccessCreateTempFile)
     input.on("close", errConfigFun)
     readLine.on("line", ptqUpdater)
+
+    readLine.on("error", readError)
+    input.on("error", readError)
+    output.on("error", readError)
   }
 
   async updateToLastArchiveData() {
@@ -130,8 +142,7 @@ export default class UpdatableSimulation extends HBVSimulation {
     const lastArchDate = new Date(this.location.lastArchDate)
     if (+lastArchDate === +lastInputArchDate) {
       return new Promise(res => {
-        resolveFunc(res)
-        endComplete("Archive date in ptq.txt is up to date")
+        res("Archive date in ptq.txt is up to date")
       })
     }
     const conditionCurry = simInput => {
