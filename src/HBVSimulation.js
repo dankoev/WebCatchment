@@ -47,7 +47,7 @@ export default class HBVSimulation {
 
   async run() {
     exec(
-      `HBV-light-CLI Run ${this._catchmentPath} ${this._type} ${this._nameOutputDir}`,
+      `WINEDEBUG=-all wine "$HBV_LIGHT_HOME/HBV-light-CLI.exe" Run ${this._catchmentPath} ${this._type} ${this._nameOutputDir}`,
       (error, stdout, stderr) => {
         if (error) {
           throw new ServerError("Simulation run error. " + error.message)

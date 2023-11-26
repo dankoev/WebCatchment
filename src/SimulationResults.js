@@ -8,7 +8,7 @@ export default class SimulationResults {
     this._header = {}
     this._columns = txtResults
       .trim()
-      .split("\r\n")
+      .split("\n")
       .reduce((acc, item) => {
         item.split("\t").forEach((el, index) => {
           if (acc[index]) {
