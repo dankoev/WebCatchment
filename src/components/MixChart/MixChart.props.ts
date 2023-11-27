@@ -1,7 +1,15 @@
-import { ChartProps } from "react-chartjs-2"
 
 export interface MixChartProps {
   title?: string
   className?: string
-  data: ChartProps["data"]
+  data : {
+    labels: string[]
+    datasets: {
+      label: string
+      type: "bar" | "line" 
+      data: number[]
+      borderColor: string,
+      backgroundColor: string
+    }[]
+  }
 }

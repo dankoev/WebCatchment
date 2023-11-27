@@ -45,7 +45,7 @@ const MixChart: FC<MixChartProps> = ({ title, data, className }) => {
   }
   return (
     <div>
-      <Chart className={className} options={options} data={data} />
+      <Chart type="line" className={className} options={options} data={data} />
     </div>
   )
 }

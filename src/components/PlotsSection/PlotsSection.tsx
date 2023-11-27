@@ -23,10 +23,12 @@ function getArrayDates(periodStart: string, periodEnd: string) {
 
 function transformIntoHeap(
   plotData: SimDataColumn[],
-  columnsOption: [string, string][],
+  columnsOption: [string, "bar" | "line"][],
   heapSize: number | undefined
-): [SimDataColumn, string | undefined, string][][] {
-  const colsWithOptions = plotData.map((el, i) => [el, ...columnsOption[i]])
+): [SimDataColumn, string | undefined, "bar" | "line"][][] {
+  const colsWithOptions = plotData.map<
+    [SimDataColumn, string | undefined, "bar" | "line"]
+  >((el, i) => [el, ...columnsOption[i]])
   const result = colsWithOptions.reduce<ReturnType<typeof transformIntoHeap>>(
     (acc, data, i) => {
       const pos = Math.floor(i / (heapSize ?? 1))

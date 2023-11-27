@@ -1,12 +1,13 @@
-import React from "react"
+import { FC } from "react"
 import styles from "./Loader.module.css"
+import { LoaderProps } from "./Loader.props"
 
-const Loader: FC = ({ isLoading, size, ...props }) => {
+const Loader: FC<LoaderProps> = ({ isLoading, size, ...props }) => {
   return (
     <div
-      className={`${props.className ?? ""} ${
-        isLoading ? styles.active : styles.hide
-      }`}
+      {...props}
+      className={`${props.className ?? ""} ${isLoading ? styles.active : styles.hide
+        }`}
       style={{ width: size, height: size }}
     >
       <div className={`${styles.loader} `}></div>

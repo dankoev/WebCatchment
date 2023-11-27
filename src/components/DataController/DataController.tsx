@@ -4,7 +4,7 @@ import useFetch from "../../hooks/useFetch"
 import { LocationsInfo } from "../../api/SimDataService.models"
 import Loader from "../Loader/Loader"
 import { useMessage } from "../../hooks/useMessage"
-import styles from "./DataCOntroller.module.css"
+import styles from "./DataController.module.css"
 import useSimResults from "../../hooks/useSimResults"
 import SelectsSection from "../SelectsSection/SelectsSection"
 
