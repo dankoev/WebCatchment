@@ -5,3 +5,4 @@ package-lock.json
 /HBV-light_data
 *.bak
 logs/
+src/WeatherAPI/configs

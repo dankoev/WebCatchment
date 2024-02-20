@@ -155,7 +155,8 @@ export default class UpdatableSimulation extends HBVSimulation {
       }
     }
     const callbackSuccess = message => {
-      this.location.lastInputArchDate = this.location.lastArchDate
+      this.location["lastInputArchDate"] = this.location.lastArchDate
+      this.location["lastDate"] = this.location.lastArchDate
       this._changeSetting(
         "endPeriod",
         new Date(this.location.lastInputArchDate).toISOString()
@@ -191,15 +192,22 @@ export default class UpdatableSimulation extends HBVSimulation {
     endWeek.setDate(endWeek.getDate() + 7)
     endWeek.setUTCHours(0, 0, 0, 0)
 
+    let realDateEnd
     const conditionCurry = simInput => {
       if (+simInput.date === +lastInputArchDate) {
-        return async () =>
-          await this.updater.getInputParamsInPeriod(lastInputArchDate, endWeek)
+        return async () => {
+          const data = await this.updater.getInputParamsInPeriod(
+            lastInputArchDate,
+            endWeek
+          )
+          realDateEnd = data[0].date
+          return data
+        }
       }
     }
     const callbackSuccess = message => {
-      this._changeSetting("endPeriod", endWeek.toISOString())
-      this.location["lastDate"] = endWeek.toISOString().slice(0, 10)
+      this._changeSetting("endPeriod", realDateEnd.toISOString())
+      this.location["lastDate"] = realDateEnd.toISOString().slice(0, 10)
       endComplete(message + "by prognosis data")
     }
     const errCreateTempFile = err => {

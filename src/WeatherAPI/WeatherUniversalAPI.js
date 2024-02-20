@@ -37,31 +37,40 @@ export default class WeatherUniversalAPI {
     const datesWithUrls = dates.map(date => {
       return [date, urlsData.map(data => ({ ...data }))]
     })
-    const getParamsByUrls = (date, arrayUrls) => {
-      return Promise.all(
-        arrayUrls.map(async ({ url, multiplier }) => {
-          const { precip, temp } = await this._parser.getParamsByDate(date, url)
-          return [multiplier * precip, multiplier * temp]
-        })
+
+    const getParamsByUrl =
+      date =>
+      async ({ url, multiplier }) => {
+        const { precip, temp } = await this._parser.getParamsByDate(date, url)
+        return [multiplier * precip, multiplier * temp]
+      }
+
+    const getSummParamsForSubUrls = async ([date, subUrls]) => {
+      return (await Promise.all(subUrls.map(getParamsByUrl(date)))).reduce(
+        (acc, result) => {
+          const [precip, temp] = result
+          acc[1] += precip
+          acc[2] += temp
+          return acc
+        },
+        [date, 0, 0]
       )
     }
 
     const simInputs = (
-      await Promise.all(
-        datesWithUrls.map(async ([date, arrayUrls]) => {
-          const avarageByDate = (await getParamsByUrls(date, arrayUrls)).reduce(
-            (acc, [precip, temp]) => {
-              return [acc[0] + precip, acc[1] + temp]
-            },
-            [0, 0]
-          )
-          return [date, ...avarageByDate]
-        })
-      )
-    ).map(
-      ([date, precip, temp]) =>
-        new SimulationInput(+precip.toFixed(2), +temp.toFixed(2), 0, date)
-    )
+      await Promise.allSettled(datesWithUrls.map(getSummParamsForSubUrls))
+    ).flatMap(result => {
+      if (result.status === "fulfilled") {
+        const [date, precip, temp] = result.value
+        return new SimulationInput(
+          +precip.toFixed(2),
+          +temp.toFixed(2),
+          0,
+          date
+        )
+      }
+      return []
+    })
     return simInputs
   }
 }
