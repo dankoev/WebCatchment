@@ -18,13 +18,13 @@
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: flex-start;
-  flex: 1;
-  position: relative;
+  gap: 10px;
 }
-
-@media screen and (max-width: 880px) {
+@media screen and (max-width: 1150px) {
+  .App {
+    width: 90vw;
+  }
   .control-section {
-    flex-flow: column-reverse wrap;
-    gap: 10px;
+    flex-flow: column-reverse;
   }
 }

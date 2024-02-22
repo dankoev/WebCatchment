@@ -32,6 +32,7 @@ ChartJS.register(
 const MixChart: FC<MixChartProps> = ({ title, data, className }) => {
   const options: ChartProps["options"] = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
@@ -44,8 +45,8 @@ const MixChart: FC<MixChartProps> = ({ title, data, className }) => {
     }
   }
   return (
-    <div>
-      <Chart type="line" className={className} options={options} data={data} />
+    <div className={className}>
+      <Chart type="line" options={options} data={data} />
     </div>
   )
 }

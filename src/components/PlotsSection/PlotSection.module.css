@@ -1,5 +1,8 @@
 .plot {
-  width: 700px;
+  position: relative;
+  width: clamp(300px, 80vw, 700px);
+  margin: auto;
+  height: 400px;
 }
 .section {
   height: auto;
