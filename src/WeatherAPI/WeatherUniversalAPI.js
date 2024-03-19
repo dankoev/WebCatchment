@@ -16,14 +16,14 @@ export default class WeatherUniversalAPI {
     this._parser = parser
   }
   _createArrayDates(periodStart, periodEnd) {
-    let mutDate = new Date(periodEnd)
-    let dateStart = new Date(periodStart)
-    if (+mutDate < +dateStart) [mutDate, dateStart] = [dateStart, mutDate]
+    let mutDate = new Date(periodStart)
+    let dateEnd = new Date(periodEnd)
+    if (mutDate > dateEnd) [mutDate, dateEnd] = [dateEnd, mutDate]
 
     const datesArray = []
-    while (+mutDate > +dateStart) {
+    while (mutDate < dateEnd) {
       datesArray.push(new Date(mutDate))
-      mutDate.setDate(mutDate.getDate() - 1)
+      mutDate.setDate(mutDate.getDate() + 1)
     }
     if (datesArray.length > this.maxPeriodLen) {
       throw new ServerError("Period length too long for update")
@@ -34,9 +34,8 @@ export default class WeatherUniversalAPI {
   async getInputParamsInPeriod(periodStart, periodEnd) {
     const dates = this._createArrayDates(periodStart, periodEnd)
     const urlsData = this.location["urlsUniversal"]
-    const datesWithUrls = dates.map(date => {
-      return [date, urlsData.map(data => ({ ...data }))]
-    })
+
+    const datesWithUrls = dates.map(date => [date, urlsData])
 
     const getParamsByUrl =
       date =>
@@ -45,8 +44,11 @@ export default class WeatherUniversalAPI {
         return [multiplier * precip, multiplier * temp]
       }
 
-    const getSummParamsForSubUrls = async ([date, subUrls]) => {
-      return (await Promise.all(subUrls.map(getParamsByUrl(date)))).reduce(
+    const getParamsByUrls = async (date, urls) =>
+      await Promise.all(urls.map(getParamsByUrl(date)))
+
+    const getSummParamsForSubUrls = async (date, subUrls) =>
+      (await getParamsByUrls(date, subUrls)).reduce(
         (acc, result) => {
           const [precip, temp] = result
           acc[1] += precip
@@ -55,22 +57,24 @@ export default class WeatherUniversalAPI {
         },
         [date, 0, 0]
       )
-    }
 
-    const simInputs = (
-      await Promise.allSettled(datesWithUrls.map(getSummParamsForSubUrls))
-    ).flatMap(result => {
-      if (result.status === "fulfilled") {
-        const [date, precip, temp] = result.value
-        return new SimulationInput(
-          +precip.toFixed(2),
-          +temp.toFixed(2),
-          0,
-          date
+    const result = []
+    for (const [reqDate, subUrls] of datesWithUrls) {
+      try {
+        const [date, precip, temp] = await getSummParamsForSubUrls(
+          reqDate,
+          subUrls
         )
+        result.push(
+          new SimulationInput(+precip.toFixed(2), +temp.toFixed(2), 0, date)
+        )
+      } catch (error) {
+        console.error(
+          `Error get date ${reqDate.toLocaleDateString()} for ${this.location}`
+        )
+        break
       }
-      return []
-    })
-    return simInputs
+    }
+    return result
   }
 }

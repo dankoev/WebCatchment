@@ -38,10 +38,7 @@ export default class UpdatableSimulation extends HBVSimulation {
   }
 
   _inputsToString(arr) {
-    return arr
-      .reverse()
-      .map(el => el.toString())
-      .join("")
+    return arr.map(el => el.toString()).join("")
   }
 
   _changeSetting(type, newVal) {
@@ -104,7 +101,7 @@ export default class UpdatableSimulation extends HBVSimulation {
         input.removeListener("close", errConfigFun)
         readLine.removeListener("line", ptqUpdater)
         try {
-          const periodData = await conditionCurry(simInput)?.()
+          const periodData = await condition()
           const stringPeriod = this._inputsToString(periodData)
           output.write(stringPeriod)
         } catch (err) {
@@ -147,11 +144,14 @@ export default class UpdatableSimulation extends HBVSimulation {
     }
     const conditionCurry = simInput => {
       if (+simInput.date === +lastInputArchDate) {
-        return async () =>
-          await this.updater.getInputParamsInPeriod(
-            lastInputArchDate,
-            lastArchDate
-          )
+        const start = new Date()
+        start.setUTCHours(0, 0, 0, 0)
+        start.setDate(lastInputArchDate.getDate() + 1)
+
+        const end = new Date()
+        end.setUTCHours(0, 0, 0, 0)
+        end.setDate(lastArchDate.getDate() + 1)
+        return async () => await this.updater.getInputParamsInPeriod(start, end)
       }
     }
     const callbackSuccess = message => {
@@ -189,18 +189,18 @@ export default class UpdatableSimulation extends HBVSimulation {
       }
     }
     const endWeek = new Date()
-    endWeek.setDate(endWeek.getDate() + 7)
+    endWeek.setDate(endWeek.getDate() + 8)
     endWeek.setUTCHours(0, 0, 0, 0)
 
     let realDateEnd
     const conditionCurry = simInput => {
       if (+simInput.date === +lastInputArchDate) {
+        const start = new Date()
+        start.setUTCHours(0, 0, 0, 0)
+        start.setDate(lastInputArchDate.getDate() + 1)
         return async () => {
-          const data = await this.updater.getInputParamsInPeriod(
-            lastInputArchDate,
-            endWeek
-          )
-          realDateEnd = data[0].date
+          const data = await this.updater.getInputParamsInPeriod(start, endWeek)
+          realDateEnd = data.at(-1)?.date ?? lastArchDate
           return data
         }
       }

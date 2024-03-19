@@ -9,7 +9,7 @@ describe("WeatherUniversalAPI functions", () => {
     const data = await new WeatherUniversalAPI(
       new WeatherData("pogoda1").locations.Barguzin,
       parsers.pogoda1
-    ).getInputParamsInPeriod("2023-09-07", "2023-09-08")
+    ).getInputParamsInPeriod("2023-09-08", "2023-09-09")
 
     assert.deepStrictEqual(
       { temp: data[0].temperature, precip: data[0].precipitation },
