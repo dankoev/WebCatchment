@@ -1,26 +1,25 @@
 import * as fs from "fs"
 import { ValueRequireError } from "../ServerExeptions.js"
 /*
- * Module for interaction with    
+ * Module for interaction with
  * location settings located in the folder src/WeatherAPI/configs
  */
-function createGetSet(obj, propName, valudator, setFunc) {
-  const hidenProp = "_" + propName
-  const updatableObj = {
-    set [propName](val) {
-      this[hidenProp] = valudator(val)
-      setFunc(this[hidenProp])
+function createGetSet(initVal, valudator, setCallback) {
+  let localVal = initVal
+  return {
+    set(val) {
+      const valid = valudator(val)
+      localVal = valid
+      setCallback(localVal)
     },
-    get [propName]() {
-      return this[hidenProp]
+    get() {
+      return localVal
     }
   }
-  updatableObj[propName] = obj[propName]
-  return updatableObj
 }
 
 function dateValidator(date) {
-  const testDateReq = /\d{4}-\d{2}-\d{2}/
+  const testDateReq = /^\d{4}-\d{2}-\d{2}$/
   if (!(date instanceof Date) && !testDateReq.test(date)) {
     throw new ValueRequireError(
       "Param must be 'Date' or string format YYYY-MM-DD"
@@ -35,27 +34,21 @@ function dateValidator(date) {
   }
 }
 
-function createUpdatableJSON(config, propName) {
-  const updatableLocations = { ...config.parse() }
-  const result = Object.keys(updatableLocations).reduce((acc, key) => {
-    acc[key] = createGetSet(
-      updatableLocations[key],
-      propName,
-      dateValidator,
-      setVal => {
-        if (updatableLocations[key][propName] === setVal) return
-        console.log(
-          `Change weather data config by path "${config.path}" for location "${key}".
-          Val "${propName}" set to "${setVal}"`
+function createUpdatableJSON(obj, propNames, validator, setProxyFn) {
+  Object.keys(obj).forEach(locationName => {
+    propNames.forEach(name => {
+      const updatable = obj[locationName]
+      Object.defineProperty(
+        updatable,
+        name,
+        createGetSet(updatable[name], validator, val =>
+          setProxyFn(val, locationName, name)
         )
-        updatableLocations[key][propName] = setVal
-        config.write(updatableLocations)
-      }
-    )
-    acc[key]["updatable"] = true
-    return acc
-  }, {})
-  return result
+      )
+    })
+    obj[locationName]["updatable"] = true
+  })
+  return obj
 }
 
 function linkWithProto(objLocations, protoLocations) {
@@ -69,91 +62,120 @@ function linkWithProto(objLocations, protoLocations) {
   return result
 }
 
-function defaultParseJson() {
-  return JSON.parse(fs.readFileSync(this.path, { encoding: "utf8" }))
+function defaultParseJson(path) {
+  return JSON.parse(fs.readFileSync(path, { encoding: "utf8" }))
 }
 
-function writeToJson(data) {
-  fs.writeFileSync(this.path, JSON.stringify(data, null, 2))
+function writeToJson(path, data) {
+  fs.writeFileSync(path, JSON.stringify(data, null, 2))
 }
 
 export default class WeatherData {
   _pathRoot = "./src/WeatherAPI/"
-  _weaterData = {
-    path: this._pathRoot + "configs/WeatherData.json",
-    write: writeToJson,
-    parse: defaultParseJson
-  }
+  _weaterDataPath = this._pathRoot + "configs/WeatherData.json"
+  _updatableLocations = null
   _config = {
     rp5: {
       path: this._pathRoot + "configs/rp5_conf.json",
-      updateToYesterday: false,
-      write: writeToJson,
-      parse: defaultParseJson
+      updateToYesterday: false
     },
     pogoda1: {
       path: this._pathRoot + "configs/pogoda1_conf.json",
-      updateToYesterday: true,
-      write: writeToJson,
-      parse: defaultParseJson
+      updateToYesterday: true
     },
     pogodaiklimat: {
       path: this._pathRoot + "configs/pogodaiklimat_conf.json",
-      updateToYesterday: true,
-      write: writeToJson,
-      parse: defaultParseJson
+      updateToYesterday: true
     }
   }
 
   constructor(configType) {
     this._configType = configType
   }
-
-  get updatableLocations() {
-    if (this._config[this._configType] === undefined) {
+  _createMainUpdatableData(propNames) {
+    const jsonObj = defaultParseJson(this._weaterDataPath)
+    return createUpdatableJSON(
+      defaultParseJson(this._weaterDataPath),
+      propNames,
+      dateValidator,
+      (val, locationName, propName) => {
+        if (jsonObj[locationName][propName] === val) return
+        jsonObj[locationName][propName] = val
+        console.log(
+          `Change weather data config
+          for location "${locationName}".
+          Val "${propName}" set to "${val}"`
+        )
+        writeToJson(this._weaterDataPath, jsonObj)
+      }
+    )
+  }
+  _createConfigUpdatableData(propNames) {
+    this._selectedConf = this._config[this._configType]
+    if (this._selectedConf === undefined) {
       throw new ValueRequireError(`config type ${this._configType} not exist`)
     }
-    const updatableLastInputArch = createUpdatableJSON(
-      this._weaterData,
-      "lastInputArchDate"
-    )
-    const _linked = linkWithProto(
-      updatableLastInputArch,
-      this._weaterData.parse()
-    )
-    const selectedConf = this._config[this._configType]
-    const updatableLast = createUpdatableJSON(this._weaterData, "lastDate")
-    const linked = linkWithProto(updatableLast, _linked)
 
-    const updatableConfData = createUpdatableJSON(selectedConf, "lastArchDate")
-    const configLinked = linkWithProto(selectedConf.parse(), linked)
-    const result = linkWithProto(updatableConfData, configLinked)
-    // console.log(
-    //   result,
-    //   result.Barguzin.__proto__,
-    //   result.Barguzin.__proto__.__proto__,
-    //   result.Barguzin.__proto__.__proto__.__proto__,
-    //   result.Barguzin.__proto__.__proto__.__proto__.__proto__
-    // )
-    if (selectedConf.updateToYesterday) {
+    const jsonObj = defaultParseJson(this._selectedConf.path)
+    return createUpdatableJSON(
+      defaultParseJson(this._selectedConf.path),
+      propNames,
+      dateValidator,
+      (val, locationName, propName) => {
+        if (jsonObj[locationName][propName] === val) return
+        jsonObj[locationName][propName] = val
+
+        console.log(
+          `Change weather data config
+          for location "${locationName}".
+          Val "${propName}" set to "${val}"`
+        )
+        writeToJson(this._selectedConf.path, jsonObj)
+      }
+    )
+  }
+  _updateLastArchDate() {
+    if (this._selectedConf.updateToYesterday) {
       const yesterday = new Date()
       yesterday.setUTCHours(0, 0, 0, 0)
       yesterday.setDate(yesterday.getDate() - 1)
-      Object.keys(result).forEach(
+      Object.keys(this._updatableLocations).forEach(
         key =>
-          (result[key]["lastArchDate"] = yesterday.toISOString().slice(0, 10))
+          (this._updatableLocations[key]["lastArchDate"] = yesterday
+            .toISOString()
+            .slice(0, 10))
       )
     }
-    return result
+  }
+
+  get updatableLocations() {
+    if (this._updatableLocations) return this._updatableLocations
+    const updatableMainData = this._createMainUpdatableData([
+      "lastDate",
+      "lastInputArchDate"
+    ])
+
+    const updatableConfigData = this._createConfigUpdatableData([
+      "lastArchDate"
+    ])
+
+    this._updatableLocations = linkWithProto(
+      updatableMainData,
+
+      updatableConfigData
+    )
+    this._updateLastArchDate()
+
+    return this._updatableLocations
   }
 
   get locations() {
-    const mainData = this._weaterData.parse()
+    const mainData = defaultParseJson(this._weaterDataPath)
     if (this._config[this._configType] === undefined) {
       return mainData
     }
     const keys = Object.keys(mainData)
-    const protoData = this._config[this._configType].parse()
+    const protoData = defaultParseJson(this._config[this._configType].path)
     return keys.reduce((acc, key) => {
       acc[key] = Object.create(
         protoData[key],
@@ -164,7 +186,7 @@ export default class WeatherData {
   }
 
   get locationsArray() {
-    const mainData = this._weaterData.parse()
+    const mainData = defaultParseJson(this._weaterDataPath)
     return Object.keys(mainData).map(key => ({
       key,
       ...mainData[key]
